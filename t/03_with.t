@@ -4,12 +4,14 @@ use Test::More;
 
 use lib 't/lib';
 {
-package FooWith;
 
-use Moo;
-use MooX::Role::Parameterized::With Bar => { attr => 'baz', method => 'run'};
+    package FooWith;
 
-has foo => ( is => 'ro');
+    use Moo;
+    use MooX::Role::Parameterized::With Bar =>
+      { attr => 'baz', method => 'run' };
+
+    has foo => ( is => 'ro' );
 
 }
 

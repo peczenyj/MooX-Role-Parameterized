@@ -11,15 +11,15 @@ our @EXPORT = qw(role method apply);
 my %code_for;
 
 sub apply {
-    my ($role, $args, %extra) = @_;
-   
+    my ( $role, $args, %extra ) = @_;
+
     return if !exists $code_for{$role};
 
     $code_for{$role}->($args);
 
-    my $target = $extra{target} // caller; 
+    my $target = $extra{target} // caller;
     require Moo::Role;
-    Moo::Role->apply_roles_to_package($target, $role);
+    Moo::Role->apply_roles_to_package( $target, $role );
 }
 
 sub role(&) {

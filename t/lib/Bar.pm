@@ -4,8 +4,8 @@ use Moo::Role;
 use MooX::Role::Parameterized;
 
 role {
-    my($params) = @_;
-    
+    my ($params) = @_;
+
     has $params->{attr} => ( is => 'rw' );
 
     method $params->{method} => sub {
