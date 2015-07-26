@@ -12,8 +12,7 @@ my %code_for;
 
 sub apply {
     my ($role, $args, %extra) = @_;
-    
-
+   
     return if !exists $code_for{$role};
 
     $code_for{$role}->($args);
