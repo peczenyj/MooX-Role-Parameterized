@@ -6,3 +6,6 @@
 
 0.03	Sun Jul 26 19:04:23 CEST 2015
 	- apply role does not need 'with'
+
+0.04	Sun Jul 26 22:51:48 CEST 2015
+	- add ::With package
