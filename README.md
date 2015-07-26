@@ -1,3 +1,7 @@
+# NAME
+
+MooX::Role::Parameterized - roles with composition parameters
+
 # SYNOPSYS
 ```perl
     package My::Role;
