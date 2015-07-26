@@ -83,6 +83,21 @@ target class, and will receive the parameter list.
 
 Add one method based on the parameter list, for example.
 
+=head1 TODO
+
+I don't know yet how to substute this three statements in just one:
+
+    use My::Role;
+
+    My::Role->apply({ 
+        attr => 'baz',   # add attribute read-write called 'baz' 
+        method => 'run'  # add method called 'run' and return 1024 
+    });
+
+    with 'My::Role';
+
+I am open to ideas. I try to play with the C<import> but the final result was ugly...
+
 =head1 SEE ALSO
 
 L<MooseX::Role::Parameterized> - Moose version

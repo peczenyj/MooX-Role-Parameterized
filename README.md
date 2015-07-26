@@ -48,6 +48,21 @@ target class, and will receive the parameter list.
 
 Add one method based on the parameter list, for example.
 
+# TODO
+
+I don't know yet how to substute this three statements in just one:
+```perl
+    use My::Role;
+
+    My::Role->apply({ 
+        attr => 'baz',   # add attribute read-write called 'baz' 
+        method => 'run'  # add method called 'run' and return 1024 
+    });
+
+    with 'My::Role';
+```
+I am open to ideas. I try to play with the `import` but the final result was ugly...
+
 # SEE ALSO
 
 [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) - Moose version
