@@ -1,36 +1,18 @@
-package MooX::Role::Parameterized;
+package MooX::Role::Parameterized::With;
 use strict;
 use warnings;
 
-# ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
+# ABSTRACT: MooX::Role::Parameterized:With - roles with composition parameters
 
-use Exporter qw(import);
-use Class::Method::Modifiers qw();
-our @EXPORT = qw(role method apply);
+use Exporter; # qw(import);
+use Module::Runtime qw(use_module); 
 
-my %code_for;
-
-sub apply {
-    my ($role, $args, %extra) = @_;
+sub import {
+    my $package = shift;
+    my $role    = shift;
+    my $target  = caller;
     
-
-    return if !exists $code_for{$role};
-
-    $code_for{$role}->($args);
-
-    my $target = $extra{target} // caller; 
-    require Moo::Role;
-    Moo::Role->apply_roles_to_package($target, $role);
-}
-
-sub role(&) {
-    my $package = (caller)[0];
-
-    $code_for{$package} = shift;
-}
-
-sub method {
-    goto &Class::Method::Modifiers::fresh;
+    use_module($role)->apply(@_, target => $target);
 }
 
 1;
@@ -38,7 +20,7 @@ __END__
 
 =head1 NAME
 
-MooX::Role::Parameterized - roles with composition parameters
+MooX::Role::Parameterized::With - roles with composition parameters
 
 =head1 SYNOPSYS
 
@@ -60,12 +42,10 @@ MooX::Role::Parameterized - roles with composition parameters
     package My::Class;
 
     use Moo;
-    use My::Role;
-
-    My::Role->apply({ 
+    use MooX::Role::Parameterized::With My::Role => {
         attr => 'baz',   # add attribute read-write called 'baz' 
         method => 'run'  # add method called 'run' and return 1024 
-    });
+    };
 
 =head1 DESCRIPTION
 
