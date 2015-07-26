@@ -22,16 +22,25 @@ MooX::Role::Parameterized - roles with composition parameters
     package My::Class;
 
     use Moo;
+    # experimental way of add roles
+    use MooX::Role::Parameterized::With My::Role => {
+        attr => 'baz',
+        method => 'run'
+    };
+
+    package My::OldClass;
+
+    use Moo;
     use My::Role;
 
-    My::Role->apply({ 
+    My::Role->apply({    # original way of add this role
         attr => 'baz',   # add attribute read-write called 'baz' 
         method => 'run'  # add method called 'run' and return 1024 
     });
 ```
 # DESCRIPTION
 
-It is a very **experimental** version of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized).
+It is an **experimental** port of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) to [Moo](https://metacpan.org/pod/Moo).
 
 # FUNCTIONS
 
@@ -52,19 +61,9 @@ target class, and will receive the parameter list.
 
 Add one method based on the parameter list, for example.
 
-# TODO
+# MooX::Role::Parameterized::With
 
-I don't know yet how to substute two three statements in just one:
-```perl
-    use My::Role;
-
-    My::Role->apply({ 
-        attr => 'baz',   # add attribute read-write called 'baz' 
-        method => 'run'  # add method called 'run' and return 1024 
-    });
-
-```
-I am open to ideas. I try to play with the `import` but the final result was ugly...
+See [MooX::Role::Parameterized::With](https://metacpan.org/pod/MooX::Role::Parameterized::With) package to easily load and apply roles.
 
 # SEE ALSO
 
