@@ -3,3 +3,6 @@
 
 0.02	Sun Jul 26 15:38:58 CEST 2015
 	- fix pod
+
+0.03	Sun Jul 26 19:04:23 CEST 2015
+	- apply role does not need 'with'

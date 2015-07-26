@@ -28,8 +28,6 @@ MooX::Role::Parameterized - roles with composition parameters
         attr => 'baz',   # add attribute read-write called 'baz' 
         method => 'run'  # add method called 'run' and return 1024 
     });
-
-    with 'My::Role';
 ```
 # DESCRIPTION
 
@@ -43,6 +41,8 @@ This package exports three subroutines `apply`, `role` and `method`.
 
 When called, will apply the ["role"](#role) on the current package. The behavior depends of the parameter list.
 
+This will install the role in the target package. Does not need call `with`.
+
 ## role
 
 This function accepts one code block. Will execute this code then we apply the Role in the 
@@ -54,7 +54,7 @@ Add one method based on the parameter list, for example.
 
 # TODO
 
-I don't know yet how to substute this three statements in just one:
+I don't know yet how to substute two three statements in just one:
 ```perl
     use My::Role;
 
@@ -63,7 +63,6 @@ I don't know yet how to substute this three statements in just one:
         method => 'run'  # add method called 'run' and return 1024 
     });
 
-    with 'My::Role';
 ```
 I am open to ideas. I try to play with the `import` but the final result was ugly...
 
