@@ -3,25 +3,25 @@ use warnings;
 use Test::More;
 
 use lib 't/lib';
-
 {
 
-    package Foo;
+    package FooWithXoxo;
 
     use Moo;
 
-    use BarWithRequires;
+    has xoxo => ( is => 'ro' );
 
-    BarWithRequires->apply( { attr => 'baz', method => 'run' } );
+    require MooX::Role::Parameterized::With;
+
+    MooX::Role::Parameterized::With->import(
+        BarWithRequires => { attr => 'baz', method => 'run' } );
 
     has foo => ( is => 'ro' );
-
-    sub xoxo { }
 }
 
-my $foo = Foo->new( foo => 1, bar => 2, baz => 3 );
+my $foo = FooWithXoxo->new( foo => 1, bar => 2, baz => 3 );
 
-isa_ok $foo, 'Foo', 'foo';
+isa_ok $foo, 'FooWithXoxo', 'foo';
 ok $foo->DOES('BarWithRequires'), 'foo should does Bar';
 is $foo->foo, 1, 'should has foo';
 is $foo->bar, 2, 'should has bar ( from Role )';

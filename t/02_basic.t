@@ -5,6 +5,7 @@ use Test::More;
 use lib 't/lib';
 
 {
+
     package Foo;
 
     use Moo;
@@ -15,7 +16,6 @@ use lib 't/lib';
 
     has foo => ( is => 'ro' );
 }
-
 
 my $foo = Foo->new( foo => 1, bar => 2, baz => 3 );
 

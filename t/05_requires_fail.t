@@ -6,6 +6,7 @@ use Test::Exception;
 use lib 't/lib';
 
 throws_ok {
+
     package Foo;
 
     use Moo;
@@ -13,6 +14,7 @@ throws_ok {
     use BarWithRequires;
 
     BarWithRequires->apply( { attr => 'baz', method => 'run' } );
-} qr/Can't apply BarWithRequires to Foo - missing xoxo/, 'should die'; 
+}
+qr/Can't apply BarWithRequires to Foo - missing xoxo/, 'should die';
 
 done_testing;
