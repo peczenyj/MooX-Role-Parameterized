@@ -9,18 +9,20 @@ use lib 't/lib';
 
     use Moo;
 
-    use Bar;
+    use BarWithRequires;
 
-    Bar->apply( { attr => 'baz', method => 'run' } );
+    BarWithRequires->apply( { attr => 'baz', method => 'run' } );
 
     has foo => ( is => 'ro' );
+    
+    sub xoxo {}
 }
 
 
 my $foo = Foo->new( foo => 1, bar => 2, baz => 3 );
 
 isa_ok $foo, 'Foo', 'foo';
-ok $foo->DOES('Bar'), 'foo should does Bar';
+ok $foo->DOES('BarWithRequires'), 'foo should does Bar';
 is $foo->foo, 1, 'should has foo';
 is $foo->bar, 2, 'should has bar ( from Role )';
 is $foo->baz, 3, 'should has baz ( from parameterized Role)';
