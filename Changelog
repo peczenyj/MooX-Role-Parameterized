@@ -9,3 +9,7 @@
 
 0.04	Sun Jul 26 22:51:48 CEST 2015
 	- add ::With package
+
+0.041 Mon Jul 27 10:42:03 CEST 2015
+  - force minperl to 5.10.0
+  - maybe 'requires' does not work inside role... should check :/
