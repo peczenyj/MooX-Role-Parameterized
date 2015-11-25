@@ -15,7 +15,9 @@ sub apply {
 
     return if !exists $code_for{$role};
 
-    $code_for{$role}->($args);
+    $args = [ $args ] if ref( $args ) ne ref( [] );
+
+    $code_for{$role}->($_) foreach ( @{ $args } );
 
     my $target = $extra{target} // caller;
     require Moo::Role;
@@ -70,10 +72,14 @@ MooX::Role::Parameterized - roles with composition parameters
     use Moo;
     use My::Role;
 
-    My::Role->apply({    # original way of add this role
-        attr => 'baz',   # add attribute read-write called 'baz' 
-        method => 'run'  # add method called 'run' and return 1024 
-    });
+    My::Role->apply([{    # original way of add this role
+        attr => 'baz',    # add attribute read-write called 'baz' 
+        method => 'run'   # add method called 'run' and return 1024 
+    }
+     ,                    # and if the apply receives one arrayref
+    {   attr => 'bam',    # will call the role block multiple times.
+        method => 'jump'  # PLEASE CALL apply once
+    }]);      
 
 =head1 DESCRIPTION
 
@@ -88,6 +94,8 @@ This package exports three subroutines C<apply>, C<role> and C<method>.
 When called, will apply the L</role> on the current package. The behavior depends of the parameter list.
 
 This will install the role in the target package. Does not need call C<with>.
+
+Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an B<arrayref>.
 
 =head2 role
 
