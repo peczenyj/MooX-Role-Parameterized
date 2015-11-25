@@ -1,10 +1,6 @@
 package TheClass;
 use strict;
 use warnings;
-use 5.012;
-use Carp;
-use autodie;
-use utf8;
 
 use Moo;
 use TheParameterizedRole;

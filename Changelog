@@ -16,3 +16,7 @@
 
 0.05	Mon Jul 27 22:50:50 CEST 2015
 	- add tests for 'requires'. yes it works.
+
+0.06  Wed Nov 25 17:17:08 CET 2015
+  - allowed apply role multiple times with arrayref ( see issue #1 )
+
