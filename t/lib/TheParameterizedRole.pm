@@ -2,14 +2,21 @@ package TheParameterizedRole;
 use strict;
 use warnings;
 
-use Moo::Role;
 use MooX::Role::Parameterized;
 
 role {
     my $params = shift;
     my $attribute = $params->{attribute};
-    has $attribute => (is => 'ro',
+    my $method    = $params->{method};
+
+    hasp $attribute => (is => 'ro',
                        default => 'this works');
+
+    method $method => sub { 'dummy' };
 };
+
+use Moo::Role;
+
+has xoxo => ( is => 'ro');
 
 1;

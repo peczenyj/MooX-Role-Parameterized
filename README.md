@@ -12,7 +12,7 @@ MooX::Role::Parameterized - roles with composition parameters
     role {
         my $params = shift;
 
-        has $params->{attr} => ( is => 'rw' );
+        hasp $params->{attr} => ( is => 'rw' );
 
         method $params->{method} => sub {
             1024;
@@ -44,7 +44,13 @@ It is an **experimental** port of [MooseX::Role::Parameterized](https://metacpan
 
 # FUNCTIONS
 
-This package exports three subroutines `apply`, `role` and `method`.
+This package exports four subroutines: `hasp`, `apply`, `role` and `method`.
+
+## hasp
+
+IMPORTANT: until the version 0.06 we have a terrible bug when you try to add the same role in two or more different classes.
+To avoid this we should not call the `has` method to specify attributes but the method `hasp` (means 'has parameterized').
+
 
 ## apply
 

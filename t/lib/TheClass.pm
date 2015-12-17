@@ -6,7 +6,8 @@ use Moo;
 use TheParameterizedRole;
 
 TheParameterizedRole->apply([ 
-  { attribute => 'foo' },
-  { attribute => 'bar' }
+  { attribute => 'foo', method => 'xxx' },
+  { attribute => 'bar', method => 'yyy' }
 ]);
+
 1;
