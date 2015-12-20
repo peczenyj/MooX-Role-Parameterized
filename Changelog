@@ -22,3 +22,6 @@
 
 0.07 Fri Dec 18 16:16:15 CET 2015
   - fix issue with has ( introduct hasp ) see issue #2
+
+0.07 Fri Dec 20 12:16:15 CET 2015
+  - add mop object to avoid problems with has/around/requires/with/ etc
