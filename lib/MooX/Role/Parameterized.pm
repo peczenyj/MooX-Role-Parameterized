@@ -1,6 +1,7 @@
 package MooX::Role::Parameterized;
 use strict;
 use warnings;
+use Carp;
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
 use MooX::Role::Parameterized::Proxy;
@@ -10,7 +11,7 @@ our @EXPORT = qw(role method apply hasp);
 
 my %code_for;
 
-sub hasp { }
+sub hasp { carp "hasp deprecated"; }
 
 sub apply {
     my ( $role, $args, %extra ) = @_;
@@ -26,11 +27,11 @@ sub apply {
       no warnings 'redefine';
       # necessary for magic
       *{$role . '::hasp'} = sub {
-        warn 'hasp deprecated, use $object->has instead.';
+#        carp 'hasp deprecated, use $object->has instead.';
         goto &{$target . '::has'};
       };
       *{$role . '::method'} = sub {
-        warn 'method deprecated, use $object->method instead.'; 
+#        carp 'method deprecated, use $object->method instead.'; 
         my ($name, $code) = @_;
         no strict 'refs';
          *{"$target\::$name"} = $code;
@@ -48,7 +49,7 @@ sub role(&) {
     $code_for{$package} = shift;
 }
 
-sub method { }
+sub method { carp "hasp deprecated"; }
 
 1;
 __END__
@@ -66,12 +67,13 @@ MooX::Role::Parameterized - roles with composition parameters
 
     role {
         my $params = shift;
+        my $mop    = shift;
 
-        hasp $params->{attr} => ( is => 'rw' );
+        $mop->has( $params->{attr} => ( is => 'rw' ));
 
-        method $params->{method} => sub {
+        $mop->method($params->{method} => sub {
             1024;
-        };
+        });
     };
 
     package My::Class;
@@ -103,12 +105,31 @@ It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
 
 =head1 FUNCTIONS
 
-This package exports four subroutines: C<hasp>, C<apply>, C<role> and C<method>.
+This package exports four subroutines: C<role>, C<apply>, C<hasp> and C<method>. The last two are now consider deprecated and will be removed soon.
 
-=head2 hasp
+=head2 role
 
-IMPORTANT: until the version 0.06 we have a terrible bug when you try to add the same role in two or more different classes.
-To avoid this we should not call the C<has> method to specify attributes but the method C<hasp> (means 'has parameterized').
+This function accepts just B<one> code block. Will execute this code then we apply the Role in the 
+target class, and will receive the parameter list + one B<mop> object.
+
+The B<mop> object is a proxy to the target class. It offer a better way to call C<has>, C<requires> or C<after> without side effects. 
+
+The old way to create parameterized roles was calling C<has> or C<method>, but there is too much problems with this approach. To solve part of them
+we add the L<hasp> but it solve part of the problem. To be clean, we decide be explicit and offer one object with full Role capability.
+
+Instead do
+
+  my ($p) = @_;
+  ...
+  hasp $p->{attribute} => (...);
+
+We prefer
+
+  my ($p, $mop) = @_;
+  ...
+  $mop->has($p->{attribute} =>(...));
+
+Less magic, less problems.
 
 =head2 apply
 
@@ -118,10 +139,12 @@ This will install the role in the target package. Does not need call C<with>.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an B<arrayref>.
 
-=head2 role
+=head1 DEPRECATED FUNCTIONS
 
-This function accepts one code block. Will execute this code then we apply the Role in the 
-target class, and will receive the parameter list.
+=head2 hasp
+
+IMPORTANT: until the version 0.06 we have a terrible bug when you try to add the same role in two or more different classes.
+To avoid this we should not call the C<has> method to specify attributes but the method C<hasp> (means 'has parameterized').
 
 =head2 method
 

@@ -2,6 +2,15 @@ package MooX::Role::Parameterized::Proxy;
 use strict;
 use warnings;
 use Carp qw(croak);
+# ABSTRACT: small proxy to offer mop methods like has, with, requires, etc.
+
+=head1 DESCRIPTION
+
+L<MooX::Role::Parameterized::Proxy> is a proxy to the target class. 
+
+This proxy offer has, with, before, around, after, requires and method - to avoid inject magic around the L<apply>
+
+=cut
 
 sub new {
 	my ($klass, %args) = @_;
@@ -32,10 +41,16 @@ sub after     {
 	goto &{$self->{target} . '::after'}; 	
 }
 sub requires  {
-	my ($self, $required_method) = @_;
+    my $self   = shift;
 	my $target = $self->{target};
 	my $role   = $self->{role};
-	croak "Can't apply $role to $target - missing $required_method" if ! $target->can( $required_method );
+    
+    if( $target->can('requires')){
+       goto &{"${target}::requires"}
+    } else {
+        my $required_method = shift;
+	    croak "Can't apply $role to $target - missing $required_method" if ! $target->can( $required_method );
+    }
 }
 sub method    {
     my ($self, $name, $code) = @_;
