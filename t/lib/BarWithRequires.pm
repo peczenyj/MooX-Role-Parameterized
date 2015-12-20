@@ -1,20 +1,20 @@
 package BarWithRequires;
 
-use Moo::Role;
 use MooX::Role::Parameterized;
 
 role {
-    my ($params) = @_;
+    my ($params, $p) = @_;
 
-    has $params->{attr} => ( is => 'rw' );
+    $p->has($params->{attr} => ( is => 'rw' ));
 
-    method $params->{method} => sub {
+    $p->method($params->{method} => sub {
         1024;
-    };
+    });
 
-    requires 'xoxo';
+    $p->requires($params->{requires});
 };
 
+use Moo::Role;
 has bar => ( is => 'ro' );
 
 1;

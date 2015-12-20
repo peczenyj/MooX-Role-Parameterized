@@ -13,7 +13,7 @@ throws_ok {
 
     use BarWithRequires;
 
-    BarWithRequires->apply( { attr => 'baz', method => 'run' } );
+    BarWithRequires->apply( { attr => 'baz', method => 'run', requires => 'xoxo' } );
 }
 qr/Can't apply BarWithRequires to Foo - missing xoxo/, 'should die';
 
