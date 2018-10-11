@@ -2,6 +2,8 @@
 
 MooX::Role::Parameterized - roles with composition parameters
 
+[![Build Status](https://travis-ci.org/peczenyj/MooX-Role-Parameterized.svg?branch=master)](https://travis-ci.org/peczenyj/MooX-Role-Parameterized)
+
 # SYNOPSIS
 
     package My::Role;
