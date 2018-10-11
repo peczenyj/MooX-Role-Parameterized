@@ -7,6 +7,7 @@ use warnings;
 use Exporter;    # qw(import);
 use Module::Runtime qw(use_module);
 use List::MoreUtils qw(natatime);
+use Role::Tiny;
 
 sub import {
     my $package = shift;
@@ -15,7 +16,16 @@ sub import {
     my $it = natatime( 2, @_ );
 
     while ( my ( $role, $params ) = $it->() ) {
-        use_module($role)->apply( $params, target => $target );
+        my $mod = use_module($role);
+        if (%$params) {
+            $mod->apply( $params, target => $target );
+        } else {
+            if ($mod->can("apply")) {
+                $mod->apply( $params, target => $target );
+            } else {
+                Role::Tiny->apply_roles_to_package( $target, $mod );
+            }
+        }
     }
 }
 
