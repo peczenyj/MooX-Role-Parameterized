@@ -4,7 +4,6 @@ use warnings;
 
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
-use Exporter;    # qw(import);
 use Module::Runtime qw(use_module);
 use List::MoreUtils qw(natatime);
 
