@@ -2,7 +2,7 @@
 
 MooX::Role::Parameterized - roles with composition parameters
 
-# SYNOPSYS
+# SYNOPSIS
 
     package My::Role;
 
