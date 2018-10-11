@@ -3,6 +3,7 @@
 MooX::Role::Parameterized - roles with composition parameters
 
 [![Build Status](https://travis-ci.org/peczenyj/MooX-Role-Parameterized.svg?branch=master)](https://travis-ci.org/peczenyj/MooX-Role-Parameterized)
+[![Coverage Status](https://coveralls.io/repos/github/peczenyj/MooX-Role-Parameterized/badge.svg?branch=master)](https://coveralls.io/github/peczenyj/MooX-Role-Parameterized?branch=master)
 
 # SYNOPSIS
 
