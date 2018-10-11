@@ -58,7 +58,7 @@ __END__
 
 MooX::Role::Parameterized - roles with composition parameters
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
     package My::Role;
 
