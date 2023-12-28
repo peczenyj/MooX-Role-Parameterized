@@ -1,4 +1,5 @@
 package MooX::Role::Parameterized;
+
 use strict;
 use warnings;
 use Carp;

@@ -1,4 +1,5 @@
 package MooX::Role::Parameterized::Proxy;
+
 use strict;
 use warnings;
 use Carp qw(croak);
