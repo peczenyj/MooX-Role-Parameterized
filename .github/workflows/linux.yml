@@ -1,0 +1,47 @@
+name: linux
+
+on:
+  - push
+
+jobs:
+  perl:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        perl-version:
+          - '5.8'
+          - '5.12'
+        include:
+          - perl-version: '5.38'
+            coverage: true
+    container: 
+      image: perl:${{ matrix.perl-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure git
+        run: git config --system --add safe.directory '*'
+      - name: perl -V
+        run: perl -V
+      - name: Install Dependencies
+        run: |
+          curl -sL https://cpanmin.us/ | perl - -nq --with-develop --installdeps .
+      - name: Fix ExtUtils::MakeMaker (for Perl 5.16 and 5.18)
+        run: cpanm -n App::cpanminus ExtUtils::MakeMaker
+      - name: Run Tests
+        run: prove -lr t
+      - name: Run tests (with tap formatter github actions)
+        if: ${{ matrix.coverage }}
+        run: |
+          cpanm -n TAP::Formatter::GitHubActions
+          prove --merge --formatter TAP::Formatter::GitHubActions -l t
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
+        env:
+          GITHUB_ACTIONS: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          cpanm -n Devel::Cover::Report::Coveralls
+          cover -test -report Coveralls
