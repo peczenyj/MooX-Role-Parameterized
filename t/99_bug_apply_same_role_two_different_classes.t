@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use 5.012;
+use 5.010;
 use Carp;
 use autodie;
 use utf8;
