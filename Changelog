@@ -1,3 +1,10 @@
+0.100   Fri Dec 29 2023 16:45:22 CET
+  - add support to perl 5.8 (thanks @mohawk2)
+  - add a with keyword (thanks @perlancar)
+  - quote bareword role name (thanks @choroba)
+  - fallback to Role::Tiny when applying (thanks @perlancar)
+  - fix missing prereqs
+
 0.082	Ter 22 Dez 2015 16:49:22 CET
   - fix meta ( bugtracker, issue tracker)
 

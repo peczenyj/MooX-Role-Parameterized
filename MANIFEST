@@ -11,6 +11,7 @@
 .perltidyrc
 .travis.yml
 Changelog
+examples/task-1-weekly-challenge-122.pl
 lib/MooX/Role/Parameterized.pm
 lib/MooX/Role/Parameterized/Proxy.pm
 lib/MooX/Role/Parameterized/With.pm
@@ -25,6 +26,7 @@ t/05_requires_fail.t
 t/06_with_requires.t
 t/10_complete_example.t
 t/20_deprecations.t
+t/99-pod.t
 t/99_bug_apply_same_role_two_different_classes.t
 t/99_bug_role_apply_twice.t
 t/lib/Bar.pm
