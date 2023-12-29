@@ -26,8 +26,10 @@ jobs:
         run: perl -V
       - name: Install Dependencies
         run: |
-          curl -L https://cpanmin.us | perl - -nq --installdeps .
-          curl -L https://cpanmin.us | perl - -n TAP::Formatter::GitHubActions
+          curl -L https://cpanmin.us | perl - -n Dist::Zilla
+          dzil authordeps --missing  | cpanm -n
+          dzil listdeps --missing    | cpanm -n
+          cpanm -n TAP::Formatter::GitHubActions
       - name: Fix ExtUtils::MakeMaker (for Perl 5.16 and 5.18)
         run: curl -L https://cpanmin.us | perl - -n App::cpanminus ExtUtils::MakeMaker
       - name: Run Tests
@@ -43,5 +45,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
-          curl -L https://cpanmin.us | perl - -n Dist::Zilla Devel::Cover Devel::Cover::Report::Coveralls
+          cpanm -n Devel::Cover Devel::Cover::Report::Coveralls
           dzil cover -report Coveralls
