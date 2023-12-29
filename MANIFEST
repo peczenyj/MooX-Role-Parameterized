@@ -1,15 +1,3 @@
-.coveralls.yml
-.github/ISSUE_TEMPLATE/bug_report.md
-.github/ISSUE_TEMPLATE/custom.md
-.github/ISSUE_TEMPLATE/feature_request.md
-.github/workflows/linux.yml
-.github/workflows/macos.yml
-.github/workflows/perlcritic.yml
-.github/workflows/perltidy.yml
-.github/workflows/windows.yml
-.perlcriticrc
-.perltidyrc
-.travis.yml
 Changelog
 examples/task-1-weekly-challenge-122.pl
 lib/MooX/Role/Parameterized.pm
