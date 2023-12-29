@@ -2,10 +2,17 @@
 
 MooX::Role::Parameterized - roles with composition parameters
 
-[![Build Status](https://travis-ci.org/peczenyj/MooX-Role-Parameterized.svg?branch=master)](https://travis-ci.org/peczenyj/MooX-Role-Parameterized)
+[![Kwalitee](https://cpants.cpanauthors.org/dist/MooX-Role-Parameterized.svg)](https://cpants.cpanauthors.org/dist/MooX-Role-Parameterized)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/linux.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/linux.yml)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/windows.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/windows.yml)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/macos.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/macos.yml)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/perltidy.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/perltidy.yml)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/perlcritic.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/perlcritic.yml)
 [![Coverage Status](https://coveralls.io/repos/github/peczenyj/MooX-Role-Parameterized/badge.svg?branch=master)](https://coveralls.io/github/peczenyj/MooX-Role-Parameterized?branch=master)
+[![license](https://img.shields.io/cpan/l/MooX-Role-Parameterized.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/blob/master/LICENSE)
+[![cpan](https://img.shields.io/cpan/v/MooX-Role-Parameterized.svg)](https://metacpan.org/dist/MooX-Role-Parameterized)
 
-# SYNOPSIS
+## SYNOPSIS
 
     package My::Role;
 
@@ -46,20 +53,20 @@ MooX::Role::Parameterized - roles with composition parameters
         method => 'jump'  # PLEASE CALL apply once
     }]);      
 
-# DESCRIPTION
+## DESCRIPTION
 
 It is an **experimental** port of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) to [Moo](https://metacpan.org/pod/Moo).
 
-# FUNCTIONS
+## FUNCTIONS
 
 This package exports four subroutines: `role`, `apply`, `hasp` and `method`. The last two are now consider deprecated and will be removed soon.
 
-## role
+### role
 
-This function accepts just **one** code block. Will execute this code then we apply the Role in the 
+This function accepts just **one** code block. Will execute this code then we apply the Role in the
 target class, and will receive the parameter list + one **mop** object.
 
-The **mop** object is a proxy to the target class. It offer a better way to call `has`, `requires` or `after` without side effects. 
+The **mop** object is a proxy to the target class. It offer a better way to call `has`, `requires` or `after` without side effects.
 
 The old way to create parameterized roles was calling `has` or `method`, but there is too much problems with this approach. To solve part of them
 we add the [hasp](https://metacpan.org/pod/hasp) but it solve part of the problem. To be clean, we decide be explicit and offer one object with full Role capability.
@@ -78,7 +85,7 @@ We prefer
 
 Less magic, less problems.
 
-## apply
+### apply
 
 When called, will apply the ["role"](#role) on the current package. The behavior depends of the parameter list.
 
@@ -86,26 +93,27 @@ This will install the role in the target package. Does not need call `with`.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an **arrayref**.
 
-# DEPRECATED FUNCTIONS
+## DEPRECATED FUNCTIONS
 
-## hasp
+### hasp
 
 IMPORTANT: until the version 0.06 we have a terrible bug when you try to add the same role in two or more different classes.
 To avoid this we should not call the `has` method to specify attributes but the method `hasp` (means 'has parameterized').
 
-## method
+### method
 
 Add one method based on the parameter list, for example.
 
-# MooX::Role::Parameterized::With
+## MooX::Role::Parameterized::With
 
 See [MooX::Role::Parameterized::With](https://metacpan.org/pod/MooX::Role::Parameterized::With) package to easily load and apply roles.
 
-# SEE ALSO
+## SEE ALSO
 
 [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) - Moose version
 
-# LICENSE
+## LICENSE
+
 The MIT License
 
     Permission is hereby granted, free of charge, to any person
@@ -133,10 +141,10 @@ The MIT License
       CONNECTION WITH THE SOFTWARE OR THE USE OR
       OTHER DEALINGS IN THE SOFTWARE.
 
-# AUTHOR
+## AUTHOR
 
 Tiago Peczenyj <tiago (dot) peczenyj (at) gmail (dot) com>
 
-# BUGS
+## BUGS
 
 Please report any bugs or feature requests on the bugtracker website
