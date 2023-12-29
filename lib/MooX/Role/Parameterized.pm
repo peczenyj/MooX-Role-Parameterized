@@ -69,8 +69,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized;
 
     role {
-        my $params = shift;
-        my $mop    = shift;
+        my ($params, $mop) = @_;
 
         $mop->has( $params->{attr} => ( is => 'rw' ));
 
@@ -86,7 +85,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
 
     with 'My::Role' => {
-        attr => 'baz',
+        attr   => 'baz',
         method => 'run'
     };
 
@@ -96,11 +95,11 @@ MooX::Role::Parameterized - roles with composition parameters
     use My::Role;
 
     My::Role->apply([{    # original way of add this role
-        attr => 'baz',    # add attribute read-write called 'baz' 
+        attr   => 'baz',  # add attribute read-write called 'baz' 
         method => 'run'   # add method called 'run' and return 1024 
     }
      ,                    # and if the apply receives one arrayref
-    {   attr => 'bam',    # will call the role block multiple times.
+    {   attr   => 'bam',  # will call the role block multiple times.
         method => 'jump'  # PLEASE CALL apply once
     }]);      
 
@@ -119,22 +118,12 @@ target class, and will receive the parameter list + one B<mop> object.
 
 The B<mop> object is a proxy to the target class. It offer a better way to call C<has>, C<requires> or C<after> without side effects. 
 
-The old way to create parameterized roles was calling C<has> or C<method>, but there is too much problems with this approach. To solve part of them
-we add the L<hasp> but it solve part of the problem. To be clean, we decide be explicit and offer one object with full Role capability.
-
-Instead do
-
-  my ($p) = @_;
-  ...
-  hasp $p->{attribute} => (...);
-
-We prefer
+Please do
 
   my ($p, $mop) = @_;
   ...
   $mop->has($p->{attribute} =>(...));
 
-Less magic, less problems.
 
 =head2 apply
 
@@ -148,12 +137,11 @@ Important, if you want to apply the role multiple times, like to create multiple
 
 =head2 hasp
 
-IMPORTANT: until the version 0.06 we have a terrible bug when you try to add the same role in two or more different classes.
-To avoid this we should not call the C<has> method to specify attributes but the method C<hasp> (means 'has parameterized').
+Removed
 
 =head2 method
 
-Add one method based on the parameter list, for example.
+Removed
 
 =head1 MooX::Role::Parameterized::With
 
@@ -162,6 +150,32 @@ See L<MooX::Role::Parameterized::With> package to easily load and apply roles.
 =head1 SEE ALSO
 
 L<MooseX::Role::Parameterized> - Moose version
+
+=head1 THANKS
+
+=over
+
+=item *
+
+FGA <fabrice.gabolde@gmail.com>
+
+=item *
+
+PERLANCAR <perlancar@gmail.com>
+
+=item *
+
+CHOROBA <choroba@cpan.org>
+
+=item *
+
+Ed J <mohawk2@users.noreply.github.com>
+
+=back
+
+  - add support to perl 5.8 (thanks @mohawk2)
+  - add a with keyword (thanks @perlancar)
+  - quote bareword role name (thanks @choroba)
 
 =head1 LICENSE
 The MIT License
