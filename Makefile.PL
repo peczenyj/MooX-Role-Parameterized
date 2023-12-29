@@ -24,7 +24,6 @@ my %WriteMakefileArgs = (
   },
   "TEST_REQUIRES" => {
     "Devel::Cover::Report::Coveralls" => 0,
-    "Dist::Zilla::App::Command::cover" => 0,
     "Test::Exception" => 0,
     "Test::More" => 0
   },
@@ -38,7 +37,6 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "Carp" => 0,
   "Devel::Cover::Report::Coveralls" => 0,
-  "Dist::Zilla::App::Command::cover" => 0,
   "List::MoreUtils" => 0,
   "Module::Runtime" => 0,
   "Moo" => 0,

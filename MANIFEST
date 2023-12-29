@@ -11,11 +11,9 @@
 .perltidyrc
 .travis.yml
 Changelog
-cpanfile
 lib/MooX/Role/Parameterized.pm
 lib/MooX/Role/Parameterized/Proxy.pm
 lib/MooX/Role/Parameterized/With.pm
-linux.yml
 Makefile.PL
 MANIFEST			This list of files
 README.md
