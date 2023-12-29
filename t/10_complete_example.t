@@ -6,72 +6,81 @@ use Test::Exception;
 use lib 't/lib';
 
 {
-	package RoleA;
 
-	use Moo::Role;
+    package RoleA;
+
+    use Moo::Role;
 }
 
 {
-	package RoleB;
 
-	use Moo::Role;
+    package RoleB;
 
-	sub r { }
+    use Moo::Role;
+
+    sub r { }
 }
 
 {
-	package RoleC;
 
-	use Moo::Role;
+    package RoleC;
 
-	sub r { die "ops"}
+    use Moo::Role;
+
+    sub r { die "ops" }
 }
 
 {
-	package CompleteClassA;
 
-	use Moo;
-	use CompleteExample;
+    package CompleteClassA;
 
-	CompleteExample->apply({
-		attr => 'a',
-		method => 'b',
-		requires => 'r',
-		with => 'RoleA',
-		after => [r => sub { die "ops" }],
-	});
+    use Moo;
+    use CompleteExample;
 
-	sub r {}
+    CompleteExample->apply(
+        {   attr     => 'a',
+            method   => 'b',
+            requires => 'r',
+            with     => 'RoleA',
+            after    => [ r => sub { die "ops" } ],
+        }
+    );
+
+    sub r { }
 }
 
 {
-	package CompleteClassB;
 
-	use Moo;
-	use CompleteExample;
+    package CompleteClassB;
 
-	CompleteExample->apply({
-		attr => 'a',
-		method => 'b',
-		requires => 'r',
-		with => 'RoleB',
-		before => [ r => sub { die "ops before"}],
-	});
+    use Moo;
+    use CompleteExample;
+
+    CompleteExample->apply(
+        {   attr     => 'a',
+            method   => 'b',
+            requires => 'r',
+            with     => 'RoleB',
+            before   => [ r => sub { die "ops before" } ],
+        }
+    );
 }
 
 {
-	package CompleteClassC;
 
-	use Moo;
-	use CompleteExample;
+    package CompleteClassC;
 
-	CompleteExample->apply({
-		attr => 'a',
-		method => 'b',
-		requires => 'r',
-		with => 'RoleC',
-		around => [ r => sub { 1024 }],
-	});
+    use Moo;
+    use CompleteExample;
+
+    CompleteExample->apply(
+        {   attr     => 'a',
+            method   => 'b',
+            requires => 'r',
+            with     => 'RoleC',
+            around   => [ r => sub {1024} ],
+        }
+    );
 }
 
 my $a = CompleteClassA->new;

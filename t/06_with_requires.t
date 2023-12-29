@@ -13,8 +13,8 @@ use lib 't/lib';
 
     require MooX::Role::Parameterized::With;
 
-    MooX::Role::Parameterized::With->import(
-        BarWithRequires => { attr => 'baz', method => 'run', requires=> 'xoxo' } );
+    MooX::Role::Parameterized::With->import( BarWithRequires =>
+          { attr => 'baz', method => 'run', requires => 'xoxo' } );
 
     has foo => ( is => 'ro' );
 }

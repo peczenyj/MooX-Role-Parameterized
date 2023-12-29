@@ -26,7 +26,7 @@ sub has       {
 
 sub with      {
 	my $self = shift;
-	goto &{$self->{target} . '::with'}; 	
+	goto &{$self->{target} . '::with'};
 }
 sub before    {
 	my $self = shift;
@@ -39,7 +39,7 @@ sub around    {
 }
 sub after     {
 	my $self = shift;
-	goto &{$self->{target} . '::after'}; 	
+	goto &{$self->{target} . '::after'};
 }
 sub requires  {
     my $self   = shift;

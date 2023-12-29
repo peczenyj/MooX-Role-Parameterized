@@ -11,7 +11,7 @@ use lib 't/lib';
 use TheClass;
 
 use Test::More;
-can_ok('TheClass', 'foo'); # succeeds
-can_ok('TheClass', 'bar'); # fails
+can_ok( 'TheClass', 'foo' );    # succeeds
+can_ok( 'TheClass', 'bar' );    # fails
 
 done_testing;

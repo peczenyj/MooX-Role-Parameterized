@@ -44,7 +44,7 @@ sub apply {
     use_module('Moo::Role')->apply_roles_to_package( $target, $role );
 }
 
-sub role(&) {
+sub role(&) { ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     my $package = (caller)[0];
 
     $code_for{$package} = shift;

@@ -12,14 +12,15 @@ use lib 't/lib';
 
     use BarWithRequires;
 
-    BarWithRequires->apply( { attr => 'baz', method => 'run', requires => 'xoxo' } );
+    BarWithRequires->apply(
+        { attr => 'baz', method => 'run', requires => 'xoxo' } );
 
     has foo => ( is => 'ro' );
 
     sub xoxo { }
 }
 
-my $foo  = Foo->new( foo => 1, bar => 2, baz => 3 );
+my $foo = Foo->new( foo => 1, bar => 2, baz => 3 );
 
 isa_ok $foo, 'Foo', 'foo';
 ok $foo->DOES('BarWithRequires'), 'foo should does Bar';
@@ -37,13 +38,14 @@ throws_ok {
 
     use BarWithRequires;
 
-    BarWithRequires->apply( { attr => 'baz', method => 'run', requires => 'xoxo2' } );
+    BarWithRequires->apply(
+        { attr => 'baz', method => 'run', requires => 'xoxo2' } );
 
     has foo => ( is => 'ro' );
 
     sub xoxo { }
-} 
- qr/Can't apply BarWithRequires to Foo2 - missing xoxo/, 
- 'should die when apply BarWithRequires on class Foo2, reason: missing xoxo2 method' ;
+}
+qr/Can't apply BarWithRequires to Foo2 - missing xoxo/,
+  'should die when apply BarWithRequires on class Foo2, reason: missing xoxo2 method';
 
 done_testing;
