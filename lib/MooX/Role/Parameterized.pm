@@ -92,8 +92,10 @@ MooX::Role::Parameterized - roles with composition parameters
     package My::Class;
 
     use Moo;
-    # experimental way of add roles
-    use MooX::Role::Parameterized::With 'My::Role' => {
+
+    use MooX::Role::Parameterized::With;
+
+    with 'My::Role' => {
         attr => 'baz',
         method => 'run'
     };
