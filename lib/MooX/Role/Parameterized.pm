@@ -2,13 +2,15 @@ package MooX::Role::Parameterized;
 
 use strict;
 use warnings;
-use Carp;
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
-use MooX::Role::Parameterized::Proxy;
-use Moo::Role       qw();
+
+use Carp            qw(croak);
 use Exporter        qw(import);
 use Module::Runtime qw(use_module);
+use Moo::Role       qw();
+
+use MooX::Role::Parameterized::Proxy;
 
 our $VERSION = "0.101";
 
