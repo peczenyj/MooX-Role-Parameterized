@@ -10,6 +10,8 @@ use Moo::Role       qw();
 use Exporter        qw(import);
 use Module::Runtime qw(use_module);
 
+our $VERSION = "0.082";
+
 our @EXPORT = qw(role method apply hasp);
 
 my %code_for;

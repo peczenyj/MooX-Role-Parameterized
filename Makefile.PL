@@ -6,52 +6,47 @@ use 5.010000;
 
 use ExtUtils::MakeMaker;
 
-my %WriteMakefileArgs = (
-  "ABSTRACT" => "MooX::Role::Parameterized - roles with composition parameters",
-  "AUTHOR" => "Tiago Peczenyj <tiago.peczenyj\@gmail.com>",
-  "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => 0
-  },
-  "DISTNAME" => "MooX-Role-Parameterized",
-  "LICENSE" => "mit",
-  "MIN_PERL_VERSION" => "5.010000",
-  "NAME" => "MooX::Role::Parameterized",
-  "PREREQ_PM" => {
-    "Carp" => 0,
-    "Module::Runtime" => 0,
-    "Role::Tiny" => 0,
-    "Moo" => 0
-  },
-  "TEST_REQUIRES" => {
-    "Devel::Cover::Report::Coveralls" => 0,
-    "Test::Exception" => 0.43,
-    "Test::More" => 0.94
-  },
-  "VERSION" => "0.082",
-  "test" => {
-    "TESTS" => "t/*.t"
-  }
+WriteMakefile(
+    NAME               => 'MooX::Role::Parameterized',
+    DISTNAME           => "MooX-Role-Parameterized",
+    AUTHOR             => 'Tiago Peczenyj <tiago.peczenyj+cpan@gmail.com>',
+    LICENSE            => "mit",
+    ABSTRACT_FROM      => 'lib/MooX/Role/Parameterized.pm',
+    VERSION_FROM       => 'lib/MooX/Role/Parameterized.pm',
+    MIN_PERL_VERSION   => 5.010,
+    CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 0 },
+    PREREQ_PM          => {
+        'Carp'            => 0,
+        'Module::Runtime' => 0,
+        'Role::Tiny'      => 0,
+        'Moo'             => 0
+    },
+    TEST_REQUIRES => {
+        'Test::Exception' => 0.43,
+        'Test::More'      => 0.94,
+    },
+    (   eval { ExtUtils::MakeMaker->VERSION(6.46) }
+        ? ( META_MERGE => {
+                'meta-spec'    => { version => 2 },
+                dynamic_config => 0,
+                resources      => {
+                    homepage =>
+                      'https://github.com/peczenyj/MooX-Role-Parameterized',
+                    repository => {
+                        type => 'git',
+                        url  =>
+                          'https://github.com/peczenyj/MooX-Role-Parameterized.git',
+                        web =>
+                          'https://github.com/peczenyj/MooX-Role-Parameterized',
+                    },
+                    bugtracker => {
+                        web =>
+                          'https://github.com/peczenyj/MooX-Role-Parameterized/issues'
+                    },
+                },
+                x_authority => 'cpan:PACMAN',
+            }
+          )
+        : ()
+    ),
 );
-
-
-my %FallbackPrereqs = (
-  "Carp" => 0,
-  "Devel::Cover::Report::Coveralls" => 0,
-  "List::MoreUtils" => 0,
-  "Module::Runtime" => 0,
-  "Moo" => 0,
-  "Test::Exception" => 0,
-  "Test::More" => 0
-);
-
-
-unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
-  delete $WriteMakefileArgs{TEST_REQUIRES};
-  delete $WriteMakefileArgs{BUILD_REQUIRES};
-  $WriteMakefileArgs{PREREQ_PM} = \%FallbackPrereqs;
-}
-
-delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
-  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
-
-WriteMakefile(%WriteMakefileArgs);

@@ -24,9 +24,11 @@ t/04_requires.t
 t/05_requires_fail.t
 t/06_with_requires.t
 t/10_complete_example.t
+t/20_deprecations.t
 t/99_bug_apply_same_role_two_different_classes.t
 t/99_bug_role_apply_twice.t
 t/lib/Bar.pm
+t/lib/BarRoleTiny.pm
 t/lib/BarWithRequires.pm
 t/lib/CompleteExample.pm
 t/lib/TheClass.pm
