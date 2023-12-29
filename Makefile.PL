@@ -24,8 +24,8 @@ my %WriteMakefileArgs = (
   },
   "TEST_REQUIRES" => {
     "Devel::Cover::Report::Coveralls" => 0,
-    "Test::Exception" => 0,
-    "Test::More" => 0
+    "Test::Exception" => 0.43,
+    "Test::More" => 0.94
   },
   "VERSION" => "0.082",
   "test" => {
