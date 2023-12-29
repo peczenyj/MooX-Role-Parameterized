@@ -1,6 +1,6 @@
-package Bar;
+package BarRoleTiny;
 
-use Moo::Role;
+use Role::Tiny;
 use MooX::Role::Parameterized;
 
 role {
@@ -15,6 +15,6 @@ role {
     );
 };
 
-has bar => ( is => 'ro' );
+sub bar {'not what you expects'}
 
 1;

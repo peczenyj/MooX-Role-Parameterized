@@ -6,8 +6,10 @@ use Carp;
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
 use MooX::Role::Parameterized::Proxy;
+use Moo::Role       qw();
 use Exporter        qw(import);
 use Module::Runtime qw(use_module);
+
 our @EXPORT = qw(role method apply hasp);
 
 my %code_for;
@@ -29,25 +31,29 @@ sub apply {
 
         # necessary for magic
         *{ $role . '::hasp' } = sub {
+            carp 'hasp deprecated, use $mop->has instead.';
 
-#        carp 'hasp deprecated, use $object->has instead.';
             goto &{ $target . '::has' };
         };
         *{ $role . '::method' } = sub {
+            carp 'method deprecated, use $mop->method instead.';
 
-#        carp 'method deprecated, use $object->method instead.';
             my ( $name, $code ) = @_;
+
             no strict 'refs';
-            *{"$target\::$name"} = $code;
+
+            *{ $target . '::' . $name } = $code;
         };
     }
+
     my $p = MooX::Role::Parameterized::Proxy->new(
         target => $target,
         role   => $role
     );
+
     $code_for{$role}->( $_, $p ) foreach ( @{$args} );
 
-    use_module('Moo::Role')->apply_roles_to_package( $target, $role );
+    Moo::Role->apply_roles_to_package( $target, $role );
 }
 
 sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
@@ -56,7 +62,7 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     $code_for{$package} = shift;
 }
 
-sub method { carp "hasp deprecated"; }
+sub method { carp "method deprecated"; }
 
 1;
 __END__

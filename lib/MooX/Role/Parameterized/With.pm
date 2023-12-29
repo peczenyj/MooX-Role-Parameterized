@@ -5,30 +5,35 @@ use warnings;
 
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
-use Module::Runtime qw(use_module);
-use List::MoreUtils qw(natatime);
+use Module::Runtime qw(use_module is_module_name);
 use Moo::Role       qw();
 use Role::Tiny      qw();
 use Carp            qw(croak);
+use Exporter        qw(import);
 
-sub import {
-    my $package = shift;
-    my $target  = caller;
+our @EXPORT = qw(with);
 
-    my $it = natatime( 2, @_ );
+sub with {
+    my $target = caller;
 
-    while ( my ( $role, $params ) = $it->() ) {
+    while (@_) {
+        my $role = shift;
+
+        croak "invalid role name ${role}" unless is_module_name($role);
+
         use_module($role);
-        if (%$params) {
+
+        if ( @_ && ref $_[0] eq 'HASH' ) {
+            my $params = shift;
             $role->apply( $params, target => $target );
         }
         else {
             if ( $role->can("apply") ) {
-                $role->apply( $params, target => $target );
+                $role->apply( {}, target => $target );
             }
             elsif ( Moo::Role->is_role($role) ) {
                 Moo::Role->apply_roles_to_package( $target, $role );
-                Moo::Role->_maybe_reset_handlemoose($target);    ## no critic (Subroutines::ProtectPrivateSubs)
+                _moo_role_maybe_reset_handlemoose($target);
             }
             elsif ( Role::Tiny->is_role($role) ) {
                 Role::Tiny->apply_roles_to_package( $target, $role );
@@ -38,6 +43,13 @@ sub import {
                   . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
             }
         }
+    }
+}
+
+# duplicate from Moo::Role
+sub _moo_role_maybe_reset_handlemoose {
+    if ( $INC{'Moo/HandleMoose.pm'} && !$Moo::sification::disabled ) {    ##no critic (Variables::ProhibitPackageVars)
+        goto &Moo::HandleMoose::maybe_reinject_fake_metaclass_for;
     }
 }
 
@@ -54,7 +66,9 @@ MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
     package FooWith;
 
     use Moo;
-    use MooX::Role::Parameterized::With Bar => {
+    use MooX::Role::Parameterized::With;
+    
+    with Bar => {
         attr => 'baz',
         method => 'run'
     }, Other::Role => { ... };

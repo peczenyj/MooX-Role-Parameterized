@@ -65,11 +65,11 @@ sub method {
     my ( $self, $name, $code ) = @_;
     my $target = $self->{target};
 
-    carp("method ${target}\:\:${name} already exists, overriding...")
+    carp("method ${target}::${name} already exists, overriding...")
       if $target->can($name);
 
     no strict 'refs';
-    *{"${target}\:\:${name}"} = $code;
+    *{ ${target} . '::' . ${name} } = $code;
 }
 
 1;

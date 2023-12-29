@@ -18,8 +18,8 @@ my %WriteMakefileArgs = (
   "NAME" => "MooX::Role::Parameterized",
   "PREREQ_PM" => {
     "Carp" => 0,
-    "List::MoreUtils" => 0,
     "Module::Runtime" => 0,
+    "Role::Tiny" => 0,
     "Moo" => 0
   },
   "TEST_REQUIRES" => {
