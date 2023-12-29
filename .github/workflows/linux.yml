@@ -26,7 +26,8 @@ jobs:
         run: perl -V
       - name: Install Dependencies
         run: |
-          curl -L https://cpanmin.us | perl - -n Dist::Zilla
+          curl -L https://cpanmin.us | perl - -nq --installdeps .
+          cpanm -n Dist::Zilla
           dzil authordeps   | cpanm -n
           dzil listdeps     | cpanm -n
           cpanm -n TAP::Formatter::GitHubActions
