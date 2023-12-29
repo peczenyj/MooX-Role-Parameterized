@@ -3,6 +3,7 @@ package MooX::Role::Parameterized::Proxy;
 use strict;
 use warnings;
 use Carp qw(croak);
+
 # ABSTRACT: small proxy to offer mop methods like has, with, requires, etc.
 
 =head1 DESCRIPTION
@@ -14,50 +15,58 @@ This proxy offer has, with, before, around, after, requires and method - to avoi
 =cut
 
 sub new {
-	my ($klass, %args) = @_;
+    my ( $klass, %args ) = @_;
 
-	return bless { target => $args{target}, role => $args{role} }, $klass;
-}
-
-sub has       {
-	my $self = shift;
-	goto &{$self->{target} . '::has'}; 
+    return bless { target => $args{target}, role => $args{role} }, $klass;
 }
 
-sub with      {
-	my $self = shift;
-	goto &{$self->{target} . '::with'};
+sub has {
+    my $self = shift;
+    goto &{ $self->{target} . '::has' };
 }
-sub before    {
-	my $self = shift;
-	goto &{$self->{target} . '::before'}; 
+
+sub with {
+    my $self = shift;
+    goto &{ $self->{target} . '::with' };
 }
-sub around    {
-	my $self = shift;
-	goto &{$self->{target} . '::around'}; 
+
+sub before {
+    my $self = shift;
+    goto &{ $self->{target} . '::before' };
+}
+
+sub around {
+    my $self = shift;
+    goto &{ $self->{target} . '::around' };
 
 }
-sub after     {
-	my $self = shift;
-	goto &{$self->{target} . '::after'};
+
+sub after {
+    my $self = shift;
+    goto &{ $self->{target} . '::after' };
 }
-sub requires  {
+
+sub requires {
     my $self   = shift;
-	my $target = $self->{target};
-	my $role   = $self->{role};
-    
-    if( $target->can('requires')){
-       goto &{"${target}::requires"}
-    } else {
+    my $target = $self->{target};
+    my $role   = $self->{role};
+
+    if ( $target->can('requires') ) {
+        goto &{"${target}::requires"};
+    }
+    else {
         my $required_method = shift;
-	    croak "Can't apply $role to $target - missing $required_method" if ! $target->can( $required_method );
+        croak "Can't apply $role to $target - missing $required_method"
+          if !$target->can($required_method);
     }
 }
-sub method    {
-    my ($self, $name, $code) = @_;
+
+sub method {
+    my ( $self, $name, $code ) = @_;
     my $target = $self->{target};
-    
-    carp("method ${target}\:\:${name} already exists, overriding...") if $target->can($name);
+
+    carp("method ${target}\:\:${name} already exists, overriding...")
+      if $target->can($name);
 
     no strict 'refs';
     *{"${target}\:\:${name}"} = $code;

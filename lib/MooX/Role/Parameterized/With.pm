@@ -7,9 +7,9 @@ use warnings;
 
 use Module::Runtime qw(use_module);
 use List::MoreUtils qw(natatime);
-use Moo::Role qw();
-use Role::Tiny qw();
-use Carp qw(croak);
+use Moo::Role       qw();
+use Role::Tiny      qw();
+use Carp            qw(croak);
 
 sub import {
     my $package = shift;
@@ -21,17 +21,21 @@ sub import {
         use_module($role);
         if (%$params) {
             $role->apply( $params, target => $target );
-        } else {
-            if ($role->can("apply")) {
+        }
+        else {
+            if ( $role->can("apply") ) {
                 $role->apply( $params, target => $target );
-            } elsif (Moo::Role->is_role($role)) {
+            }
+            elsif ( Moo::Role->is_role($role) ) {
                 Moo::Role->apply_roles_to_package( $target, $role );
-                Moo::Role->_maybe_reset_handlemoose($target); ## no critic (Subroutines::ProtectPrivateSubs)
-            } elsif (Role::Tiny->is_role($role)) {
+                Moo::Role->_maybe_reset_handlemoose($target);    ## no critic (Subroutines::ProtectPrivateSubs)
+            }
+            elsif ( Role::Tiny->is_role($role) ) {
                 Role::Tiny->apply_roles_to_package( $target, $role );
-            } else {
-                croak "Can't apply $role to $target: $role is neither a ".
-                    "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
+            }
+            else {
+                croak "Can't apply $role to $target: $role is neither a "
+                  . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
             }
         }
     }
