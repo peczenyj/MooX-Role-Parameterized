@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 use Carp;
-use autodie;
 use utf8;
 
 use lib 't/lib';
