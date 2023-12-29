@@ -1,4 +1,4 @@
-name: linux
+name: macos
 
 on:
   - push
@@ -27,24 +27,6 @@ jobs:
       - name: Install Dependencies
         run: |
           curl -L https://cpanmin.us | perl - -nq --installdeps .
-          cpanm -n Dist::Zilla
-          dzil authordeps   | cpanm -n
-          dzil listdeps     | cpanm -n
-          cpanm -n TAP::Formatter::GitHubActions
-      - name: Fix ExtUtils::MakeMaker (for Perl 5.16 and 5.18)
-        run: curl -L https://cpanmin.us | perl - -n App::cpanminus ExtUtils::MakeMaker
+          curl -L https://cpanmin.us | perl - -n TAP::Formatter::GitHubActions
       - name: Run Tests
-        run: prove -lr t
-      - name: Run tests (with tap formatter github actions)
-        if: ${{ matrix.coverage }}
-        run: |
-          prove --merge --formatter TAP::Formatter::GitHubActions -l t
-      - name: Run tests (with coverage)
-        if: ${{ matrix.coverage }}
-        env:
-          GITHUB_ACTIONS: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: |
-          cpanm -n Devel::Cover Devel::Cover::Report::Coveralls
-          dzil cover -report Coveralls
+        run: prove --merge --formatter TAP::Formatter::GitHubActions -l t
