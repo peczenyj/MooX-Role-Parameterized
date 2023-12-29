@@ -41,8 +41,10 @@ sub apply {
             *{"$target\::$name"} = $code;
         };
     }
-    my $p = MooX::Role::Parameterized::Proxy->new( target => $target,
-        role => $role );
+    my $p = MooX::Role::Parameterized::Proxy->new(
+        target => $target,
+        role   => $role
+    );
     $code_for{$role}->( $_, $p ) foreach ( @{$args} );
 
     use_module('Moo::Role')->apply_roles_to_package( $target, $role );
