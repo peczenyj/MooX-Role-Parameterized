@@ -13,7 +13,7 @@ WriteMakefile(
     LICENSE            => "mit",
     ABSTRACT_FROM      => 'lib/MooX/Role/Parameterized.pm',
     VERSION_FROM       => 'lib/MooX/Role/Parameterized.pm',
-    MIN_PERL_VERSION   => 5.010,
+    MIN_PERL_VERSION   => 5.008,
     CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 0 },
     PREREQ_PM          => {
         'Carp'            => 0,
