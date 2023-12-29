@@ -29,10 +29,8 @@ jobs:
         run: perl -V
       - name: Install Dependencies
         run: |
-          curl -L https://cpanmin.us | perl - -n Dist::Zilla
-          dzil authordeps --missing  | cpanm -n
-          dzil listdeps   --missing  | cpanm -n
+          curl -L https://cpanmin.us | perl - -nq --installdeps .
+          curl -L https://cpanmin.us | perl - -n TAP::Formatter::GitHubActions
       - name: Run Tests
         run: |
-          curl -L https://cpanmin.us | perl - -n TAP::Formatter::GitHubActions
           prove --merge --formatter TAP::Formatter::GitHubActions -l t
