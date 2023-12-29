@@ -14,7 +14,7 @@ our @EXPORT = qw(role method apply hasp);
 
 my %code_for;
 
-sub hasp { carp "hasp deprecated"; }
+sub hasp { croak "hasp is deprecated and should not be used"; }
 
 sub apply {
     my ( $role, $args, %extra ) = @_;
@@ -62,7 +62,7 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     $code_for{$package} = shift;
 }
 
-sub method { carp "method deprecated"; }
+sub method { croak "method is deprecated and should not be used"; }
 
 1;
 __END__
