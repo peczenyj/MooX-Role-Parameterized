@@ -12,11 +12,9 @@ use Module::Runtime qw(use_module);
 
 our $VERSION = "0.101";
 
-our @EXPORT = qw(role method apply hasp);
+our @EXPORT = qw(role apply);
 
 my %code_for;
-
-sub hasp { croak "hasp is deprecated and should not be used"; }
 
 sub apply {
     my ( $role, $args, %extra ) = @_;
@@ -29,22 +27,12 @@ sub apply {
 
     {
         no strict 'refs';
-        no warnings 'redefine';
 
-        # necessary for magic
         *{ $role . '::hasp' } = sub {
-            carp 'hasp deprecated, use $mop->has instead.';
-
-            goto &{ $target . '::has' };
+            croak 'hasp deprecated, use $mop->has instead.';
         };
         *{ $role . '::method' } = sub {
-            carp 'method deprecated, use $mop->method instead.';
-
-            my ( $name, $code ) = @_;
-
-            no strict 'refs';
-
-            *{ $target . '::' . $name } = $code;
+            croak 'method deprecated, use $mop->method instead.';
         };
     }
 
@@ -63,8 +51,6 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
 
     $code_for{$package} = shift;
 }
-
-sub method { croak "method is deprecated and should not be used"; }
 
 1;
 __END__
