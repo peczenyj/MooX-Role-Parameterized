@@ -25,7 +25,7 @@ sub apply {
 
     $args = [$args] if ref($args) ne ref( [] );
 
-    my $target = $extra{target} // caller;
+    my $target = defined( $extra{target} ) ? $extra{target} : caller;
 
     {
         no strict 'refs';
