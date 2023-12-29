@@ -1,3 +1,6 @@
+0.101   Fri Dec 29 2023 16:55:22 CET
+  - fix versioning
+
 0.100   Fri Dec 29 2023 16:45:22 CET
   - add support to perl 5.8 (thanks @mohawk2)
   - add a with keyword (thanks @perlancar)

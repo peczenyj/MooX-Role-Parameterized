@@ -3,6 +3,8 @@ package MooX::Role::Parameterized::With;
 use strict;
 use warnings;
 
+our $VERSION = "0.101";
+
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
 use Module::Runtime qw(use_module is_module_name);
