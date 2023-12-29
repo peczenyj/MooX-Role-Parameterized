@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
+our $VERSION = "0.101";
+
 # ABSTRACT: small proxy to offer mop methods like has, with, requires, etc.
 
 =head1 DESCRIPTION
