@@ -119,7 +119,7 @@ It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
 
 =head1 FUNCTIONS
 
-This package exports four subroutines: C<role>, C<apply_roles_to_target> and C<apply>.
+This package exports the following subroutines: C<role>, C<apply_roles_to_target> and C<apply>.
 
 =head2 role
 
@@ -195,10 +195,6 @@ CHOROBA <choroba@cpan.org>
 Ed J <mohawk2@users.noreply.github.com>
 
 =back
-
-  - add support to perl 5.8 (thanks @mohawk2)
-  - add a with keyword (thanks @perlancar)
-  - quote bareword role name (thanks @choroba)
 
 =head1 LICENSE
 The MIT License

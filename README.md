@@ -44,13 +44,13 @@ MooX::Role::Parameterized - roles with composition parameters
     use Moo;
     use My::Role;
 
-    My::Role->apply([{    # original way of add this role
-        attr => 'baz',    # add attribute read-write called 'baz' 
-        method => 'run'   # add method called 'run' and return 1024 
+    My::Role->apply_roles_to_target([{    # original way of add this role
+        attr => 'baz',                    # add attribute read-write called 'baz' 
+        method => 'run'                   # add method called 'run' and return 1024 
     }
-     ,                    # and if the apply receives one arrayref
-    {   attr => 'bam',    # will call the role block multiple times.
-        method => 'jump'  # PLEASE CALL apply once
+     ,                                    # and if the apply receives one arrayref
+    {   attr => 'bam',                    # will call the role block multiple times.
+        method => 'jump'                  # PLEASE CALL apply once
     }]);      
 
 ## DESCRIPTION
@@ -59,7 +59,7 @@ It is an **experimental** port of [MooseX::Role::Parameterized](https://metacpan
 
 ## FUNCTIONS
 
-This package exports four subroutines: `role`, `apply`, `hasp` and `method`. The last two are now consider deprecated and will be removed soon.
+This package exports the following subroutines: `role`, `apply_roles_to_target` and `apply`.
 
 ### role
 
@@ -68,24 +68,17 @@ target class, and will receive the parameter list + one **mop** object.
 
 The **mop** object is a proxy to the target class. It offer a better way to call `has`, `requires` or `after` without side effects.
 
-The old way to create parameterized roles was calling `has` or `method`, but there is too much problems with this approach. To solve part of them
-we add the [hasp](https://metacpan.org/pod/hasp) but it solve part of the problem. To be clean, we decide be explicit and offer one object with full Role capability.
-
-Instead do
-
-    my ($p) = @_;
-    ...
-    hasp $p->{attribute} => (...);
-
-We prefer
+Please do:
 
     my ($p, $mop) = @_;
     ...
     $mop->has($p->{attribute} =>(...));
 
-Less magic, less problems.
-
 ### apply
+
+Alias to `apply_roles_to_target`.
+
+### apply_roles_to_target
 
 When called, will apply the ["role"](#role) on the current package. The behavior depends of the parameter list.
 
@@ -93,16 +86,22 @@ This will install the role in the target package. Does not need call `with`.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an **arrayref**.
 
+## MooX::Role::Parameterized::VERBOSE
+
+By setting `$MooX::Role::Parameterized::VERBOSE` with some true value we will carp on certain conditions
+(method override, unable to load package, etc).
+
+Default is false.
+
 ## DEPRECATED FUNCTIONS
 
 ### hasp
 
-IMPORTANT: until the version 0.06 we have a terrible bug when you try to add the same role in two or more different classes.
-To avoid this we should not call the `has` method to specify attributes but the method `hasp` (means 'has parameterized').
+Deleted
 
 ### method
 
-Add one method based on the parameter list, for example.
+Deleted
 
 ## MooX::Role::Parameterized::With
 
