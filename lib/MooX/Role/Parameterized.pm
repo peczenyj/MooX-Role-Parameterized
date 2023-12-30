@@ -137,11 +137,11 @@ Please do
 
 =head2 apply
 
-Alias to L<apply_roles_to_target>
+Alias to C<apply_roles_to_target>
 
 =head2 apply_roles_to_target
 
-When called, will apply the L</role> on the current package. The behavior depends of the parameter list.
+When called, will apply the C</role> on the current package. The behavior depends of the parameter list.
 
 This will install the role in the target package. Does not need call C<with>.
 
