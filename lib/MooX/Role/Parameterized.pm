@@ -38,6 +38,7 @@ sub apply_roles_to_target {
 
     {
         no strict 'refs';
+        no warnings 'redefine';
 
         *{ $role . '::hasp' } = sub {
             croak 'hasp deprecated, use $mop->has instead.';
