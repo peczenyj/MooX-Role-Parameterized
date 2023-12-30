@@ -3,17 +3,28 @@ package MooX::Role::Parameterized::With;
 use strict;
 use warnings;
 
-our $VERSION = "0.101";
+our $VERSION = "0.200";
 
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
 use Module::Runtime qw(use_module is_module_name);
 use Moo::Role       qw();
 use Role::Tiny      qw();
-use Carp            qw(croak);
-use Exporter        qw(import);
+use Carp            qw(carp croak);
 
-our @EXPORT = qw(with);
+sub import {
+    my $target = caller;
+
+    {
+        no strict 'refs';
+        no warnings 'redefine';
+
+        carp "will redefine 'with' function injected by Moo"
+          if $MooX::Role::Parameterized::VERBOSE;
+
+        *{ $target . '::with' } = \&with;
+    }
+}
 
 sub with {
     my $target = caller;
@@ -21,9 +32,9 @@ sub with {
     while (@_) {
         my $role = shift;
 
-        croak "invalid role name ${role}" unless is_module_name($role);
+        eval { use_module($role) };
 
-        use_module($role);
+        carp($@) if $MooX::Role::Parameterized::VERBOSE && $@;
 
         if ( @_ && ref $_[0] eq 'HASH' ) {
             my $params = shift;

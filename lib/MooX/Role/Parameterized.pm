@@ -5,20 +5,29 @@ use warnings;
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
 
-use Carp            qw(croak);
+use Carp            qw(carp croak);
 use Exporter        qw(import);
 use Module::Runtime qw(use_module);
 use Moo::Role       qw();
 
 use MooX::Role::Parameterized::Proxy;
 
-our $VERSION = "0.101";
+our $VERSION = "0.200";
 
-our @EXPORT = qw(role apply);
+our @EXPORT = qw(role apply apply_roles_to_target);
+
+our $VERBOSE = 0;
 
 my %code_for;
 
 sub apply {
+    carp "apply method is deprecated, please use 'apply_roles_to_target'"
+      if $VERBOSE;
+
+    goto &apply_roles_to_target;
+}
+
+sub apply_roles_to_target {
     my ( $role, $args, %extra ) = @_;
 
     return if !exists $code_for{$role};
@@ -94,13 +103,13 @@ MooX::Role::Parameterized - roles with composition parameters
     use Moo;
     use My::Role;
 
-    My::Role->apply([{    # original way of add this role
-        attr   => 'baz',  # add attribute read-write called 'baz' 
-        method => 'run'   # add method called 'run' and return 1024 
+    My::Role->apply_roles_to_target([{ # original way of add this role
+        attr   => 'baz',               # add attribute read-write called 'baz' 
+        method => 'run'                # add method called 'run' and return 1024 
     }
-     ,                    # and if the apply receives one arrayref
-    {   attr   => 'bam',  # will call the role block multiple times.
-        method => 'jump'  # PLEASE CALL apply once
+     ,                                 # and if the apply receives one arrayref
+    {   attr   => 'bam',               # will call the role block multiple times.
+        method => 'jump'               # PLEASE CALL apply once
     }]);      
 
 =head1 DESCRIPTION
@@ -109,7 +118,7 @@ It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
 
 =head1 FUNCTIONS
 
-This package exports four subroutines: C<role>, C<apply>, C<hasp> and C<method>. The last two are now consider deprecated and will be removed soon.
+This package exports four subroutines: C<role>, C<apply_roles_to_target> and C<apply>.
 
 =head2 role
 
@@ -127,6 +136,10 @@ Please do
 
 =head2 apply
 
+Alias to L<apply_roles_to_target>
+
+=head2 apply_roles_to_target
+
 When called, will apply the L</role> on the current package. The behavior depends of the parameter list.
 
 This will install the role in the target package. Does not need call C<with>.
@@ -142,6 +155,15 @@ Removed
 =head2 method
 
 Removed
+
+=head1 VARIABLES
+
+=head2 MooX::Role::Parameterized::VERBOSE
+
+By setting C<$MooX::Role::Parameterized::VERBOSE> with some true value we will carp on certain conditions 
+(method override, unable to load package, etc).
+
+Default is false.
 
 =head1 MooX::Role::Parameterized::With
 

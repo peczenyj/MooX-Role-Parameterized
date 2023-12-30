@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp qw(croak);
 
-our $VERSION = "0.101";
+our $VERSION = "0.2O0";
 
 # ABSTRACT: small proxy to offer mop methods like has, with, requires, etc.
 
@@ -40,7 +40,6 @@ sub before {
 sub around {
     my $self = shift;
     goto &{ $self->{target} . '::around' };
-
 }
 
 sub after {
@@ -54,11 +53,11 @@ sub requires {
     my $role   = $self->{role};
 
     if ( $target->can('requires') ) {
-        goto &{"${target}::requires"};
+        goto &{ ${target} . '::requires' };
     }
     else {
         my $required_method = shift;
-        croak "Can't apply $role to $target - missing $required_method"
+        croak "Can't apply ${role} to ${target} - missing '${required_method}'"
           if !$target->can($required_method);
     }
 }
@@ -68,9 +67,11 @@ sub method {
     my $target = $self->{target};
 
     carp("method ${target}::${name} already exists, overriding...")
-      if $target->can($name);
+      if $MooX::Role::Parameterized::VERBOSE && $target->can($name);
 
     no strict 'refs';
+    no warnings 'redefine';
+
     *{ ${target} . '::' . ${name} } = $code;
 }
 
