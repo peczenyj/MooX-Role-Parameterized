@@ -2,23 +2,32 @@ package MooX::Role::Parameterized;
 
 use strict;
 use warnings;
-use Carp;
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
-use MooX::Role::Parameterized::Proxy;
-use Moo::Role       qw();
+
+use Carp            qw(carp croak);
 use Exporter        qw(import);
 use Module::Runtime qw(use_module);
+use Moo::Role       qw();
 
-our $VERSION = "0.101";
+use MooX::Role::Parameterized::Proxy;
 
-our @EXPORT = qw(role method apply hasp);
+our $VERSION = "0.200";
+
+our @EXPORT = qw(role apply apply_roles_to_target);
+
+our $VERBOSE = 0;
 
 my %code_for;
 
-sub hasp { croak "hasp is deprecated and should not be used"; }
-
 sub apply {
+    carp "apply method is deprecated, please use 'apply_roles_to_target'"
+      if $VERBOSE;
+
+    goto &apply_roles_to_target;
+}
+
+sub apply_roles_to_target {
     my ( $role, $args, %extra ) = @_;
 
     return if !exists $code_for{$role};
@@ -31,20 +40,11 @@ sub apply {
         no strict 'refs';
         no warnings 'redefine';
 
-        # necessary for magic
         *{ $role . '::hasp' } = sub {
-            carp 'hasp deprecated, use $mop->has instead.';
-
-            goto &{ $target . '::has' };
+            croak 'hasp deprecated, use $mop->has instead.';
         };
         *{ $role . '::method' } = sub {
-            carp 'method deprecated, use $mop->method instead.';
-
-            my ( $name, $code ) = @_;
-
-            no strict 'refs';
-
-            *{ $target . '::' . $name } = $code;
+            croak 'method deprecated, use $mop->method instead.';
         };
     }
 
@@ -64,8 +64,6 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     $code_for{$package} = shift;
 }
 
-sub method { croak "method is deprecated and should not be used"; }
-
 1;
 __END__
 
@@ -81,8 +79,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized;
 
     role {
-        my $params = shift;
-        my $mop    = shift;
+        my ($params, $mop) = @_;
 
         $mop->has( $params->{attr} => ( is => 'rw' ));
 
@@ -98,7 +95,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
 
     with 'My::Role' => {
-        attr => 'baz',
+        attr   => 'baz',
         method => 'run'
     };
 
@@ -107,13 +104,13 @@ MooX::Role::Parameterized - roles with composition parameters
     use Moo;
     use My::Role;
 
-    My::Role->apply([{    # original way of add this role
-        attr => 'baz',    # add attribute read-write called 'baz' 
-        method => 'run'   # add method called 'run' and return 1024 
+    My::Role->apply_roles_to_target([{ # original way of add this role
+        attr   => 'baz',               # add attribute read-write called 'baz' 
+        method => 'run'                # add method called 'run' and return 1024 
     }
-     ,                    # and if the apply receives one arrayref
-    {   attr => 'bam',    # will call the role block multiple times.
-        method => 'jump'  # PLEASE CALL apply once
+     ,                                 # and if the apply receives one arrayref
+    {   attr   => 'bam',               # will call the role block multiple times.
+        method => 'jump'               # PLEASE CALL apply once
     }]);      
 
 =head1 DESCRIPTION
@@ -122,7 +119,7 @@ It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
 
 =head1 FUNCTIONS
 
-This package exports four subroutines: C<role>, C<apply>, C<hasp> and C<method>. The last two are now consider deprecated and will be removed soon.
+This package exports four subroutines: C<role>, C<apply_roles_to_target> and C<apply>.
 
 =head2 role
 
@@ -131,24 +128,18 @@ target class, and will receive the parameter list + one B<mop> object.
 
 The B<mop> object is a proxy to the target class. It offer a better way to call C<has>, C<requires> or C<after> without side effects. 
 
-The old way to create parameterized roles was calling C<has> or C<method>, but there is too much problems with this approach. To solve part of them
-we add the L<hasp> but it solve part of the problem. To be clean, we decide be explicit and offer one object with full Role capability.
-
-Instead do
-
-  my ($p) = @_;
-  ...
-  hasp $p->{attribute} => (...);
-
-We prefer
+Please do
 
   my ($p, $mop) = @_;
   ...
   $mop->has($p->{attribute} =>(...));
 
-Less magic, less problems.
 
 =head2 apply
+
+Alias to L<apply_roles_to_target>
+
+=head2 apply_roles_to_target
 
 When called, will apply the L</role> on the current package. The behavior depends of the parameter list.
 
@@ -160,12 +151,20 @@ Important, if you want to apply the role multiple times, like to create multiple
 
 =head2 hasp
 
-IMPORTANT: until the version 0.06 we have a terrible bug when you try to add the same role in two or more different classes.
-To avoid this we should not call the C<has> method to specify attributes but the method C<hasp> (means 'has parameterized').
+Removed
 
 =head2 method
 
-Add one method based on the parameter list, for example.
+Removed
+
+=head1 VARIABLES
+
+=head2 MooX::Role::Parameterized::VERBOSE
+
+By setting C<$MooX::Role::Parameterized::VERBOSE> with some true value we will carp on certain conditions 
+(method override, unable to load package, etc).
+
+Default is false.
 
 =head1 MooX::Role::Parameterized::With
 
@@ -174,6 +173,32 @@ See L<MooX::Role::Parameterized::With> package to easily load and apply roles.
 =head1 SEE ALSO
 
 L<MooseX::Role::Parameterized> - Moose version
+
+=head1 THANKS
+
+=over
+
+=item *
+
+FGA <fabrice.gabolde@gmail.com>
+
+=item *
+
+PERLANCAR <perlancar@gmail.com>
+
+=item *
+
+CHOROBA <choroba@cpan.org>
+
+=item *
+
+Ed J <mohawk2@users.noreply.github.com>
+
+=back
+
+  - add support to perl 5.8 (thanks @mohawk2)
+  - add a with keyword (thanks @perlancar)
+  - quote bareword role name (thanks @choroba)
 
 =head1 LICENSE
 The MIT License

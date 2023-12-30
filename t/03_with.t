@@ -7,26 +7,14 @@ use lib 't/lib';
 
     package FooWith;
 
-    use Moo;
+    use Moo qw(has);
     use MooX::Role::Parameterized::With;
 
     with Bar => { attr => 'baz', method => 'run' };
 
     has foo => ( is => 'ro' );
 
-}
-
-{
-
-    package FooWithRoleTiny;
-
-    use Moo;
-    use MooX::Role::Parameterized::With;
-
-    with BarRoleTiny => { attr => 'baz', method => 'run' };
-
-    has foo => ( is => 'ro' );
-
+    1;
 }
 
 subtest "FooWith" => sub {
@@ -42,18 +30,55 @@ subtest "FooWith" => sub {
     is $foo->run, 1024, 'should call run';
 
     done_testing;
-
 };
+
+{
+
+    package Bar::RoleTiny;
+
+    use Role::Tiny;
+
+    around bar => sub {'not what you expects'};
+
+    1;
+}
+{
+
+    package Baz::MooRole;
+
+    use Moo::Role;
+
+    around baz => sub {'not what you expects too'};
+
+    1;
+}
+
+{
+
+    package FooWithRoleTiny;
+
+    use Moo;
+    use MooX::Role::Parameterized::With;
+
+    with Bar => { attr => 'baz', method => 'run' }, "Bar::RoleTiny",
+      "Baz::MooRole";
+
+    has foo => ( is => 'ro' );
+
+    1;
+}
 
 subtest "FooWithRoleTiny" => sub {
 
     my $foo = FooWithRoleTiny->new( foo => 1, baz => 3 );
 
     isa_ok $foo, 'FooWithRoleTiny', 'foo';
-    ok $foo->DOES('BarRoleTiny'), 'foo should does BarRoleTiny';
-    is $foo->foo, 1,                      'should has foo';
-    is $foo->bar, 'not what you expects', 'should has bar ( from Role )';
-    is $foo->baz, 3, 'should has baz ( from parameterized Role)';
+    ok $foo->DOES('Bar::RoleTiny'), 'foo should does Bar::RoleTiny';
+    ok $foo->DOES('Baz::MooRole'),  'foo should does Baz::MooRole';
+
+    is $foo->foo, 1,                          'should has foo';
+    is $foo->bar, 'not what you expects',     'should has bar ( from Role )';
+    is $foo->baz, 'not what you expects too', 'should has baz ( from Role)';
     ok $foo->can('run'), 'should can run';
     is $foo->run, 1024, 'should call run';
 

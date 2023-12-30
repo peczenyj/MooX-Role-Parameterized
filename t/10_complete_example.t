@@ -37,7 +37,7 @@ use lib 't/lib';
     use Moo;
     use CompleteExample;
 
-    CompleteExample->apply(
+    CompleteExample->apply_roles_to_target(
         {   attr     => 'a',
             method   => 'b',
             requires => 'r',

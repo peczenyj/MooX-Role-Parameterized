@@ -7,7 +7,7 @@ use lib 't/lib';
 
     package FooWithXoxo;
 
-    use Moo;
+    use Moo qw(has);
 
     has xoxo => ( is => 'ro' );
 
