@@ -13,9 +13,9 @@ throws_ok {
 
     use BarWithRequires;
 
-    BarWithRequires->apply(
+    BarWithRequires->apply_roles_to_target(
         { attr => 'baz', method => 'run', requires => 'xoxo' } );
 }
-qr/Can't apply BarWithRequires to Foo - missing xoxo/, 'should die';
+qr/Can't apply BarWithRequires to Foo - missing 'xoxo'/, 'should die';
 
 done_testing;

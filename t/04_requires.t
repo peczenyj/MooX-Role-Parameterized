@@ -38,14 +38,14 @@ throws_ok {
 
     use BarWithRequires;
 
-    BarWithRequires->apply(
+    BarWithRequires->apply_roles_to_target(
         { attr => 'baz', method => 'run', requires => 'xoxo2' } );
 
     has foo => ( is => 'ro' );
 
     sub xoxo { }
 }
-qr/Can't apply BarWithRequires to Foo2 - missing xoxo/,
+qr/Can't apply BarWithRequires to Foo2 - missing 'xoxo2'/,
   'should die when apply BarWithRequires on class Foo2, reason: missing xoxo2 method';
 
 done_testing;
