@@ -13,8 +13,9 @@ use MooX::Role::Parameterized::Proxy;
 
 our $VERSION = "0.200";
 
-our @EXPORT    = qw(role apply apply_roles_to_target);
-our @EXPORT_OK = qw(role apply apply_roles_to_target apply_roles_to_package);
+our @EXPORT = qw(role apply apply_roles_to_target);
+our @EXPORT_OK =
+  qw(role apply apply_roles_to_target build_apply_roles_to_package);
 
 our $VERBOSE = 0;
 
@@ -64,34 +65,46 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     $code_for{$package} = shift;
 }
 
-sub apply_roles_to_package {
-    my $target = caller;
+sub build_apply_roles_to_package {
+    my $orig = shift;
 
-    while (@_) {
-        my $role = shift;
+    return sub {
+        my $target = caller;
 
-        eval { use_module($role) };
+        while (@_) {
+            my $role = shift;
 
-        if ( @_ && ref $_[0] eq 'HASH' && $role->can("apply_roles_to_target") )
-        {
-            my $params = shift;
-            $role->apply_roles_to_target( $params, target => $target );
-        }
-        elsif ( $role->can("apply_roles_to_target") ) {
-            $role->apply_roles_to_target( {}, target => $target );
-        }
-        elsif ( Moo::Role->is_role($role) ) {
-            Moo::Role->apply_roles_to_package( $target, $role );
-            _moo_role_maybe_reset_handlemoose($target);
-        }
-        elsif ( Role::Tiny->is_role($role) ) {
-            Role::Tiny->apply_roles_to_package( $target, $role );
-        }
-        else {
+            eval { use_module($role) };
+
+            if ( $role->can("apply_roles_to_target") ) {
+                my $params = ( @_ && ref $_[0] eq 'HASH' ) ? shift : {};
+
+                $role->apply_roles_to_target( $params, target => $target );
+
+                next;
+            }
+
+            if ( defined $orig && ref $orig eq 'CODE' ) {
+                $orig->($role);
+            }
+
+            if ( Moo::Role->is_role($role) ) {
+                Moo::Role->apply_roles_to_package( $target, $role );
+                _moo_role_maybe_reset_handlemoose($target);
+
+                next;
+            }
+
+            if ( Role::Tiny->is_role($role) ) {
+                Role::Tiny->apply_roles_to_package( $target, $role );
+
+                next;
+            }
+
             croak "Can't apply $role to $target: $role is neither a "
               . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
         }
-    }
+    };
 }
 
 # copied from Moo::Role
