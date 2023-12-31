@@ -18,7 +18,7 @@ sub import {
     {
         no strict 'refs';
         no warnings 'redefine';
-
+        
         carp "will redefine 'with' function injected by Moo"
           if $MooX::Role::Parameterized::VERBOSE;
 

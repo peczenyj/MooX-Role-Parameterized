@@ -55,11 +55,10 @@ sub requires {
     if ( $target->can('requires') ) {
         goto &{ ${target} . '::requires' };
     }
-    else {
-        my $required_method = shift;
-        croak "Can't apply ${role} to ${target} - missing '${required_method}'"
-          if !$target->can($required_method);
-    }
+
+    my $required_method = shift;
+    croak "Can't apply ${role} to ${target} - missing '${required_method}'"
+      if !$target->can($required_method);
 }
 
 sub method {
@@ -71,6 +70,7 @@ sub method {
 
     no strict 'refs';
     no warnings 'redefine';
+    use warnings FATAL => 'uninitialized';
 
     *{ ${target} . '::' . ${name} } = $code;
 }
