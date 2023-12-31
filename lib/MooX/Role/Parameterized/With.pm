@@ -8,7 +8,7 @@ our $VERSION = "0.200";
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
 use Carp                      qw(carp);
-use MooX::Role::Parameterized qw(build_apply_roles_to_package);
+use MooX::Role::Parameterized qw();
 
 sub import {
     my $target = caller;
@@ -21,7 +21,8 @@ sub import {
         no strict 'refs';
         no warnings 'redefine';
 
-        *{ $target . '::with' } = build_apply_roles_to_package($orig);
+        *{ $target . '::with' } =
+          MooX::Role::Parameterized->build_apply_roles_to_package($orig);
     }
 }
 

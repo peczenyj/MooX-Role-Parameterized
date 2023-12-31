@@ -14,8 +14,6 @@ use MooX::Role::Parameterized::Proxy;
 our $VERSION = "0.200";
 
 our @EXPORT = qw(role apply apply_roles_to_target);
-our @EXPORT_OK =
-  qw(role apply apply_roles_to_target build_apply_roles_to_package);
 
 our $VERBOSE = 0;
 
@@ -66,7 +64,7 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
 }
 
 sub build_apply_roles_to_package {
-    my $orig = shift;
+    my ( $klass, $orig ) = @_;
 
     return sub {
         my $target = caller;
@@ -90,13 +88,9 @@ sub build_apply_roles_to_package {
 
             if ( Moo::Role->is_role($role) ) {
                 Moo::Role->apply_roles_to_package( $target, $role );
-                _moo_role_maybe_reset_handlemoose($target);
-
-                next;
-            }
-
-            if ( Role::Tiny->is_role($role) ) {
-                Role::Tiny->apply_roles_to_package( $target, $role );
+                eval {
+                    Moo::Role->_maybe_reset_handlemoose($target);    ##no critic(Subroutines::ProtectPrivateSubs)
+                };
 
                 next;
             }
@@ -105,13 +99,6 @@ sub build_apply_roles_to_package {
               . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
         }
     };
-}
-
-# copied from Moo::Role
-sub _moo_role_maybe_reset_handlemoose {
-    if ( $INC{'Moo/HandleMoose.pm'} && !$Moo::sification::disabled ) {    ##no critic (Variables::ProhibitPackageVars)
-        goto &Moo::HandleMoose::maybe_reinject_fake_metaclass_for;
-    }
 }
 
 1;
