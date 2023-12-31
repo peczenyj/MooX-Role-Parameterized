@@ -15,7 +15,6 @@ WriteMakefile(
     PREREQ_PM          => {
         'Carp'            => 0,
         'Module::Runtime' => 0,
-        'Role::Tiny'      => 0,
         'Moo'             => 0
     },
     TEST_REQUIRES => {
