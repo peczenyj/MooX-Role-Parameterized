@@ -42,6 +42,11 @@ sub around {
     goto &{ $self->{target} . '::around' };
 }
 
+sub extends {
+    my $self = shift;
+    goto &{ $self->{target} . '::extends' };
+}
+
 sub after {
     my $self = shift;
     goto &{ $self->{target} . '::after' };
