@@ -18,7 +18,7 @@ sub import {
     {
         no strict 'refs';
         no warnings 'redefine';
-        
+
         carp "will redefine 'with' function injected by Moo"
           if $MooX::Role::Parameterized::VERBOSE;
 
@@ -38,23 +38,21 @@ sub with {
 
         if ( @_ && ref $_[0] eq 'HASH' ) {
             my $params = shift;
-            $role->apply( $params, target => $target );
+            $role->apply_roles_to_target( $params, target => $target );
+        }
+        elsif ( $role->can("apply_roles_to_target") ) {
+            $role->apply_roles_to_target( {}, target => $target );
+        }
+        elsif ( Moo::Role->is_role($role) ) {
+            Moo::Role->apply_roles_to_package( $target, $role );
+            _moo_role_maybe_reset_handlemoose($target);
+        }
+        elsif ( Role::Tiny->is_role($role) ) {
+            Role::Tiny->apply_roles_to_package( $target, $role );
         }
         else {
-            if ( $role->can("apply") ) {
-                $role->apply( {}, target => $target );
-            }
-            elsif ( Moo::Role->is_role($role) ) {
-                Moo::Role->apply_roles_to_package( $target, $role );
-                _moo_role_maybe_reset_handlemoose($target);
-            }
-            elsif ( Role::Tiny->is_role($role) ) {
-                Role::Tiny->apply_roles_to_package( $target, $role );
-            }
-            else {
-                croak "Can't apply $role to $target: $role is neither a "
-                  . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
-            }
+            croak "Can't apply $role to $target: $role is neither a "
+              . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
         }
     }
 }
