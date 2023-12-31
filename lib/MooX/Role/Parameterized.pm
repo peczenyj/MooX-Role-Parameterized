@@ -5,16 +5,16 @@ use warnings;
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
 
+use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
 use Exporter        qw(import);
-use Module::Runtime qw(use_module);
-use Moo::Role       qw();
 
 use MooX::Role::Parameterized::Proxy;
 
 our $VERSION = "0.200";
 
-our @EXPORT = qw(role apply apply_roles_to_target);
+our @EXPORT    = qw(role apply apply_roles_to_target);
+our @EXPORT_OK = qw(role apply apply_roles_to_target apply_roles_to_package);
 
 our $VERBOSE = 0;
 
@@ -62,6 +62,43 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     my $package = (caller)[0];
 
     $code_for{$package} = shift;
+}
+
+sub apply_roles_to_package {
+    my $target = caller;
+
+    while (@_) {
+        my $role = shift;
+
+        eval { use_module($role) };
+
+        if ( @_ && ref $_[0] eq 'HASH' && $role->can("apply_roles_to_target") )
+        {
+            my $params = shift;
+            $role->apply_roles_to_target( $params, target => $target );
+        }
+        elsif ( $role->can("apply_roles_to_target") ) {
+            $role->apply_roles_to_target( {}, target => $target );
+        }
+        elsif ( Moo::Role->is_role($role) ) {
+            Moo::Role->apply_roles_to_package( $target, $role );
+            _moo_role_maybe_reset_handlemoose($target);
+        }
+        elsif ( Role::Tiny->is_role($role) ) {
+            Role::Tiny->apply_roles_to_package( $target, $role );
+        }
+        else {
+            croak "Can't apply $role to $target: $role is neither a "
+              . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
+        }
+    }
+}
+
+# copied from Moo::Role
+sub _moo_role_maybe_reset_handlemoose {
+    if ( $INC{'Moo/HandleMoose.pm'} && !$Moo::sification::disabled ) {    ##no critic (Variables::ProhibitPackageVars)
+        goto &Moo::HandleMoose::maybe_reinject_fake_metaclass_for;
+    }
 }
 
 1;

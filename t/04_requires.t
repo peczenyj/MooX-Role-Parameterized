@@ -12,7 +12,7 @@ use lib 't/lib';
 
     use BarWithRequires;
 
-    BarWithRequires->apply(
+    BarWithRequires->apply_roles_to_target(
         { attr => 'baz', method => 'run', requires => 'xoxo' } );
 
     has foo => ( is => 'ro' );
