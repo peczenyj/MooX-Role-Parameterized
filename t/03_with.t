@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use Test::Exception;
 
 use lib 't/lib';
 {
@@ -84,6 +85,35 @@ subtest "FooWithRoleTiny" => sub {
 
     done_testing;
 
+};
+
+subtest "with should die with non role" => sub {
+    throws_ok {
+
+        {
+
+            package Z::Z::Z;
+
+            sub foo { }
+
+            1;
+        }
+        {
+
+            package X::Y::Z;
+
+            use MooX::Role::Parameterized::With;
+
+            with "Z::Z::Z";
+
+            1;
+        }
+
+    }
+    qr<Can't apply role to X::Y::Z: Z::Z::Z is neither a MooX::Role::Parameterized/Moo::Role/Role::Tiny role>,
+      "should die";
+
+    done_testing;
 };
 
 done_testing;
