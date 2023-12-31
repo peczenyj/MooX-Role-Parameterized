@@ -111,7 +111,7 @@ subtest "with should die with non role" => sub {
 
     }
     qr<Can't apply role to X::Y::Z: Z::Z::Z is neither a MooX::Role::Parameterized/Moo::Role/Role::Tiny role>,
-      "should die";
+      "should die if role is not an expected type";
 
     done_testing;
 };
