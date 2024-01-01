@@ -17,7 +17,7 @@ our @EXPORT = qw(role apply apply_roles_to_target);
 
 our $VERBOSE = 0;
 
-my %code_for;
+our %INFO;
 
 sub apply {
     carp "apply method is deprecated, please use 'apply_roles_to_target'"
@@ -29,7 +29,7 @@ sub apply {
 sub apply_roles_to_target {
     my ( $role, $args, %extra ) = @_;
 
-    return if !exists $code_for{$role};
+    return if !exists $INFO{$role};
 
     $args = [$args] if ref($args) ne ref( [] );
 
@@ -52,7 +52,7 @@ sub apply_roles_to_target {
         role   => $role
     );
 
-    $code_for{$role}->( $_, $p ) foreach ( @{$args} );
+    $INFO{$role}->{code_for}->( $_, $p ) foreach ( @{$args} );
 
     Moo::Role->apply_roles_to_package( $target, $role );
 }
@@ -60,7 +60,16 @@ sub apply_roles_to_target {
 sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     my $package = (caller)[0];
 
-    $code_for{$package} = shift;
+    $INFO{$package} = {
+        is_role  => 1,
+        code_for => shift,
+    };
+}
+
+sub is_role {
+    my ( $klass, $role ) = @_;
+
+    return !!( $INFO{$role} && $INFO{$role}->{is_role} );
 }
 
 sub build_apply_roles_to_package {
@@ -191,6 +200,14 @@ When called, will apply the C</role> on the current package. The behavior depend
 This will install the role in the target package. Does not need call C<with>.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an B<arrayref>.
+
+=head1 STATIC METHOS
+
+=head2 is_role
+
+Returns true if the package is a L<MooX::Role::Parameterized>.
+
+  MooX::Role::Parameterized->is_role("My::Role");
 
 =head1 DEPRECATED FUNCTIONS
 
