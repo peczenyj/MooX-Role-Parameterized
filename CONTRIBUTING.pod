@@ -78,11 +78,12 @@ Redo from step 3.
 
     git checkout main
     # Bump version number
-    $EDITOR lib/GDPR/IAB/TCFv2.pm
+    $EDITOR lib/MooX/Role/Parameterized/Mop.pm
+    $EDITOR lib/MooX/Role/Parameterized/With.pm
+    $EDITOR lib/MooX/Role/Parameterized.pm
     # Update changelog
     $EDITOR Changes
     # update readme
-    pod2markdown lib/GDPR/IAB/TCFv2.pm > README.md
     git add .
     git commit
 
@@ -92,6 +93,7 @@ Redo from step 3.
     perl Makefile.PL
     make
     make test
+    make manifest # in case of adding new files / tests / examples...
     make dist
     ...
 
