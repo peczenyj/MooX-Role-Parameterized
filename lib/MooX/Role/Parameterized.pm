@@ -93,6 +93,8 @@ sub build_apply_roles_to_package {
 
             if ( defined $orig && ref $orig eq 'CODE' ) {
                 $orig->($role);
+
+                next;
             }
 
             if ( Moo::Role->is_role($role) ) {
