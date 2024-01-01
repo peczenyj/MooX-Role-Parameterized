@@ -8,6 +8,7 @@ use warnings;
 use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
 use Exporter        qw(import);
+use Moo::Role       qw();
 
 use MooX::Role::Parameterized::Mop;
 
@@ -121,45 +122,46 @@ MooX::Role::Parameterized - roles with composition parameters
 
 =head1 SYNOPSIS
 
-    package My::Role;
-
+    package Counter;
     use Moo::Role;
     use MooX::Role::Parameterized;
-
+    
     role {
-        my ($params, $mop) = @_;
-
-        $mop->has( $params->{attr} => ( is => 'rw' ));
-
-        $mop->method($params->{method} => sub {
-            1024;
+        my ($p, $mop) = @_;
+    
+        my $name = $p->{name};
+    
+        $mop->has($name => (
+            is      => 'rw',
+            default => sub { 0 },
+        ));
+    
+        $mop->method("increment_$name" => sub {
+            my $self = shift;
+            $self->$name($self->$name + 1);
+        });
+    
+        $mop->method("reset_$name" => sub {
+            my $self = shift;
+            $self->$name(0);
         });
     };
-
-    package My::Class;
-
+    
+    package MyGame::Weapon;
     use Moo;
-
+    use MooX::Role::Parameterized::With;
+    
+    with Counter => {          # injects 'enchantment' attribute and
+        name => 'enchantment', # methods increment_enchantment (setter)
+    };                         # reset_enchantment (set to zero)
+    
+    package MyGame::Wand;
+    use Moo;
     use MooX::Role::Parameterized::With;
 
-    with 'My::Role' => {
-        attr   => 'baz',
-        method => 'run'
-    };
-
-    package My::OldClass;
-
-    use Moo;
-    use My::Role;
-
-    My::Role->apply_roles_to_target([{ # original way of add this role
-        attr   => 'baz',               # add attribute read-write called 'baz' 
-        method => 'run'                # add method called 'run' and return 1024 
-    }
-     ,                                 # and if the apply receives one arrayref
-    {   attr   => 'bam',               # will call the role block multiple times.
-        method => 'jump'               # PLEASE CALL apply once
-    }]);      
+    with Counter => {         # injects 'zapped' attribute and
+        name => 'zapped',     # methods increment_zapped (setter)
+    };                        # reset_zapped (set to zero)
 
 =head1 DESCRIPTION
 
@@ -180,7 +182,7 @@ It offer a better way to call C<has>, C<after>, C<before>, C<around>, C<with> an
 
 Use C<method> to inject a new method and C<meta> to access TARGET_PACKAGE->meta
 
-Please do
+Please use:
 
   my ($p, $mop) = @_;
   ...
@@ -189,7 +191,6 @@ Please do
   $mop->method(name => sub { ... });
 
   $mop->meta->make_immutable;
-
 
 =head2 apply
 
@@ -202,6 +203,35 @@ When called, will apply the C</role> on the current package. The behavior depend
 This will install the role in the target package. Does not need call C<with>.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an B<arrayref>.
+
+    package My::Role;
+
+    use Moo::Role;
+    use MooX::Role::Parameterized;
+
+    role {
+        my ($params, $mop) = @_;
+
+        $mop->has( $params->{attr} => ( is => 'rw' ));
+
+        $mop->method($params->{method} => sub {
+            1024;
+        });
+    };
+
+    package My::Class;
+
+    use Moo;
+    use My::Role;
+
+    My::Role->apply_roles_to_target([{ # original way of add this role
+        attr   => 'baz',               # add attribute read-write called 'baz' 
+        method => 'run'                # add method called 'run' and return 1024 
+    }
+     ,                                 # and if the apply receives one arrayref
+    {   attr   => 'bam',               # will call the role block multiple times.
+        method => 'jump'               # PLEASE CALL apply once
+    }]);   
 
 =head1 STATIC METHOS
 

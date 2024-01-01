@@ -14,44 +14,46 @@ MooX::Role::Parameterized - roles with composition parameters
 
 ## SYNOPSIS
 
-    package My::Role;
-
+    package Counter;
     use Moo::Role;
     use MooX::Role::Parameterized;
-
+    
     role {
-        my $params = shift;
-        my $mop    = shift;
-
-        $mop->has( $params->{attr} => ( is => 'rw' ));
-
-        $mop->method($params->{method} => sub {
-            1024;
+        my ($p, $mop) = @_;
+    
+        my $name = $p->{name};
+    
+        $mop->has($name => (
+            is      => 'rw',
+            default => sub { 0 },
+        ));
+    
+        $mop->method("increment_$name" => sub {
+            my $self = shift;
+            $self->$name($self->$name + 1);
+        });
+    
+        $mop->method("reset_$name" => sub {
+            my $self = shift;
+            $self->$name(0);
         });
     };
-
-    package My::Class;
-
+    
+    package MyGame::Weapon;
     use Moo;
-    # experimental way of add roles
-    use MooX::Role::Parameterized::With 'My::Role' => {
-        attr => 'baz',
-        method => 'run'
-    };
-
-    package My::OldClass;
-
+    use MooX::Role::Parameterized::With;
+    
+    with Counter => {          # injects 'enchantment' attribute and
+        name => 'enchantment', # methods increment_enchantment (setter)
+    };                         # reset_enchantment (set to zero)
+    
+    package MyGame::Wand;
     use Moo;
-    use My::Role;
+    use MooX::Role::Parameterized::With;
 
-    My::Role->apply_roles_to_target([{    # original way of add this role
-        attr => 'baz',                    # add attribute read-write called 'baz' 
-        method => 'run'                   # add method called 'run' and return 1024 
-    }
-     ,                                    # and if the apply receives one arrayref
-    {   attr => 'bam',                    # will call the role block multiple times.
-        method => 'jump'                  # PLEASE CALL apply once
-    }]);      
+    with Counter => {         # injects 'zapped' attribute and
+        name => 'zapped',     # methods increment_zapped (setter)
+    };                        # reset_zapped (set to zerà)
 
 ## DESCRIPTION
 
@@ -63,16 +65,24 @@ This package exports the following subroutines: `role`, `apply_roles_to_target` 
 
 ### role
 
-This function accepts just **one** code block. Will execute this code then we apply the Role in the
+This function accepts just **one** code block. Will execute this code then we apply the Role in the 
 target class, and will receive the parameter list + one **mop** object.
 
-The **mop** object is a proxy to the target class. It offer a better way to call `has`, `requires` or `after` without side effects.
+The **mop** object is a proxy to the target class.
 
-Please do:
+It offer a better way to call `has`, `after`, `before`, `around`, `with` and `requires` without side effects.
 
-    my ($p, $mop) = @_;
-    ...
-    $mop->has($p->{attribute} =>(...));
+Use `method` to inject a new method and `meta` to access `TARGET_PACKAGE->meta`
+
+Please use:
+
+  my ($p, $mop) = @_;
+  ...
+  $mop->has($p->{attribute} =>(...));
+
+  $mop->method(name => sub { ... });
+
+  $mop->meta->make_immutable;
 
 ### apply
 
@@ -80,11 +90,41 @@ Alias to `apply_roles_to_target`.
 
 ### apply_roles_to_target
 
-When called, will apply the ["role"](#role) on the current package. The behavior depends of the parameter list.
+When called, will apply the `/role` on the current package. The behavior depends of the parameter list.
 
 This will install the role in the target package. Does not need call `with`.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an **arrayref**.
+
+    package My::Role;
+
+    use Moo::Role;
+    use MooX::Role::Parameterized;
+
+    role {
+        my ($params, $mop) = @_;
+
+        $mop->has( $params->{attr} => ( is => 'rw' ));
+
+        $mop->method($params->{method} => sub {
+            1024;
+        });
+    };
+
+    package My::Class;
+
+    use Moo;
+    use My::Role;
+
+    My::Role->apply_roles_to_target([{ # original way of add this role
+        attr   => 'baz',               # add attribute read-write called 'baz' 
+        method => 'run'                # add method called 'run' and return 1024 
+    }
+     ,                                 # and if the apply receives one arrayref
+    {   attr   => 'bam',               # will call the role block multiple times.
+        method => 'jump'               # PLEASE CALL apply once
+    }]);
+
 
 ## MooX::Role::Parameterized::VERBOSE
 
@@ -110,6 +150,13 @@ See [MooX::Role::Parameterized::With](https://metacpan.org/pod/MooX::Role::Param
 ## SEE ALSO
 
 [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) - Moose version
+
+## THANKS
+
+* FGA <fabrice.gabolde@gmail.com>
+* PERLANCAR <perlancar@gmail.com>
+* CHOROBA <choroba@cpan.org>
+* Ed J <mohawk2@users.noreply.github.com>
 
 ## LICENSE
 
