@@ -18,6 +18,21 @@ use lib 't/lib';
     1;
 }
 
+{
+
+    package FooWith2;
+
+    use Moo qw(has);
+    use MooX::Role::Parameterized::With;
+
+    with Bar => { attr => 'baz', method => 'run' },
+      Bar    => { attr => 'bam', method => 'doit' };
+
+    has foo => ( is => 'ro' );
+
+    1;
+}
+
 subtest "FooWith" => sub {
 
     my $foo = FooWith->new( foo => 1, bar => 2, baz => 3 );
@@ -29,6 +44,24 @@ subtest "FooWith" => sub {
     is $foo->baz, 3, 'should has baz ( from parameterized Role)';
     ok $foo->can('run'), 'should can run';
     is $foo->run, 1024, 'should call run';
+
+    done_testing;
+};
+
+subtest "FooWith2" => sub {
+
+    my $foo = FooWith2->new( foo => 1, bar => 2, baz => 3, bam => 4 );
+
+    isa_ok $foo, 'FooWith2', 'foo';
+    ok $foo->DOES('Bar'), 'foo should does Bar';
+    is $foo->foo, 1, 'should has foo';
+    is $foo->bar, 2, 'should has bar ( from Role )';
+    is $foo->baz, 3, 'should has baz ( from parameterized Role)';
+    is $foo->bam, 4, 'should has baù ( from parameterized Role)';
+    ok $foo->can('run'),  'should can run';
+    ok $foo->can('doit'), 'should can run';
+    is $foo->run,  1024, 'should call run';
+    is $foo->doit, 1024, 'should call doit';
 
     done_testing;
 };
