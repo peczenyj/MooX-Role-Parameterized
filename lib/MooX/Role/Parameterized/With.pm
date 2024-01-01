@@ -3,66 +3,26 @@ package MooX::Role::Parameterized::With;
 use strict;
 use warnings;
 
-our $VERSION = "0.200";
+our $VERSION = "0.300";
 
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
-use Module::Runtime qw(use_module is_module_name);
-use Moo::Role       qw();
-use Role::Tiny      qw();
-use Carp            qw(carp croak);
+use Carp                      qw(carp);
+use MooX::Role::Parameterized qw();
 
 sub import {
     my $target = caller;
 
     {
+        my $orig = $target->can('with');
+        carp "will redefine 'with' function"
+          if $orig && $MooX::Role::Parameterized::VERBOSE;
+
         no strict 'refs';
         no warnings 'redefine';
 
-        carp "will redefine 'with' function injected by Moo"
-          if $MooX::Role::Parameterized::VERBOSE;
-
-        *{ $target . '::with' } = \&with;
-    }
-}
-
-sub with {
-    my $target = caller;
-
-    while (@_) {
-        my $role = shift;
-
-        eval { use_module($role) };
-
-        carp($@) if $MooX::Role::Parameterized::VERBOSE && $@;
-
-        if ( @_ && ref $_[0] eq 'HASH' ) {
-            my $params = shift;
-            $role->apply( $params, target => $target );
-        }
-        else {
-            if ( $role->can("apply") ) {
-                $role->apply( {}, target => $target );
-            }
-            elsif ( Moo::Role->is_role($role) ) {
-                Moo::Role->apply_roles_to_package( $target, $role );
-                _moo_role_maybe_reset_handlemoose($target);
-            }
-            elsif ( Role::Tiny->is_role($role) ) {
-                Role::Tiny->apply_roles_to_package( $target, $role );
-            }
-            else {
-                croak "Can't apply $role to $target: $role is neither a "
-                  . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
-            }
-        }
-    }
-}
-
-# duplicate from Moo::Role
-sub _moo_role_maybe_reset_handlemoose {
-    if ( $INC{'Moo/HandleMoose.pm'} && !$Moo::sification::disabled ) {    ##no critic (Variables::ProhibitPackageVars)
-        goto &Moo::HandleMoose::maybe_reinject_fake_metaclass_for;
+        *{ $target . '::with' } =
+          MooX::Role::Parameterized->build_apply_roles_to_package($orig);
     }
 }
 

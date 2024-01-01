@@ -1,19 +1,21 @@
-package MooX::Role::Parameterized::Proxy;
+package MooX::Role::Parameterized::Mop;
 
 use strict;
 use warnings;
-use Carp qw(croak);
+use Carp         qw(croak);
+use Scalar::Util qw(blessed);
 
-our $VERSION = "0.2O0";
+our $VERSION = "0.3O0";
 
 # ABSTRACT: small proxy to offer mop methods like has, with, requires, etc.
 
 =head1 DESCRIPTION
 
-L<MooX::Role::Parameterized::Proxy> is a proxy to the target class. 
+L<MooX::Role::Parameterized::Mop> is a proxy to the target class. 
 
-This proxy offer has, with, before, around, after, requires and method - to avoid inject magic around the L<apply>
+This proxy offer C<has>, C<with>, C<before>, C<around>, C<after>, C<requires> and C<method> to avoid inject magic around the L<apply>
 
+It also provides C<meta> as an alias of TARGET_PACKAGE->meta
 =cut
 
 sub new {
@@ -47,19 +49,16 @@ sub after {
     goto &{ $self->{target} . '::after' };
 }
 
-sub requires {
-    my $self   = shift;
-    my $target = $self->{target};
-    my $role   = $self->{role};
+sub meta {
+    my $self = shift;
 
-    if ( $target->can('requires') ) {
-        goto &{ ${target} . '::requires' };
-    }
-    else {
-        my $required_method = shift;
-        croak "Can't apply ${role} to ${target} - missing '${required_method}'"
-          if !$target->can($required_method);
-    }
+    return $self->{target}->meta;
+}
+
+sub requires {
+    my $self = shift;
+
+    goto &{ $self->{role} . '::requires' };
 }
 
 sub method {
@@ -69,10 +68,13 @@ sub method {
     carp("method ${target}::${name} already exists, overriding...")
       if $MooX::Role::Parameterized::VERBOSE && $target->can($name);
 
-    no strict 'refs';
-    no warnings 'redefine';
+    {
+        no strict 'refs';
+        no warnings 'redefine';
+        use warnings FATAL => 'uninitialized';
 
-    *{ ${target} . '::' . ${name} } = $code;
+        *{ ${target} . '::' . ${name} } = $code;
+    }
 }
 
 1;

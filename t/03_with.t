@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Test::More;
+use Test::Exception;
 
 use lib 't/lib';
 {
@@ -11,6 +12,21 @@ use lib 't/lib';
     use MooX::Role::Parameterized::With;
 
     with Bar => { attr => 'baz', method => 'run' };
+
+    has foo => ( is => 'ro' );
+
+    1;
+}
+
+{
+
+    package FooWith2;
+
+    use Moo qw(has);
+    use MooX::Role::Parameterized::With;
+
+    with Bar => { attr => 'baz', method => 'run' },
+      Bar    => { attr => 'bam', method => 'doit' };
 
     has foo => ( is => 'ro' );
 
@@ -28,6 +44,24 @@ subtest "FooWith" => sub {
     is $foo->baz, 3, 'should has baz ( from parameterized Role)';
     ok $foo->can('run'), 'should can run';
     is $foo->run, 1024, 'should call run';
+
+    done_testing;
+};
+
+subtest "FooWith2" => sub {
+
+    my $foo = FooWith2->new( foo => 1, bar => 2, baz => 3, bam => 4 );
+
+    isa_ok $foo, 'FooWith2', 'foo';
+    ok $foo->DOES('Bar'), 'foo should does Bar';
+    is $foo->foo, 1, 'should has foo';
+    is $foo->bar, 2, 'should has bar ( from Role )';
+    is $foo->baz, 3, 'should has baz ( from parameterized Role)';
+    is $foo->bam, 4, 'should has baù ( from parameterized Role)';
+    ok $foo->can('run'),  'should can run';
+    ok $foo->can('doit'), 'should can run';
+    is $foo->run,  1024, 'should call run';
+    is $foo->doit, 1024, 'should call doit';
 
     done_testing;
 };
@@ -84,6 +118,35 @@ subtest "FooWithRoleTiny" => sub {
 
     done_testing;
 
+};
+
+subtest "with should die with non role" => sub {
+    throws_ok {
+
+        {
+
+            package Z::Z::Z;
+
+            sub foo { }
+
+            1;
+        }
+        {
+
+            package X::Y::Z;
+
+            use MooX::Role::Parameterized::With;
+
+            with "Z::Z::Z";
+
+            1;
+        }
+
+    }
+    qr<Can't apply role to 'X::Y::Z' - 'Z::Z::Z' is neither a MooX::Role::Parameterized, Moo::Role or Role::Tiny role>,
+      "should die if role is not an expected type";
+
+    done_testing;
 };
 
 done_testing;

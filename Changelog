@@ -1,3 +1,11 @@
+0.300   Mon Jan 01 2024 13:12:22 CET
+  - small changes in POD
+  - add meta method in mop
+  - add is_role static method in MooX::Role::Parameterized
+  - fix bug in requires mop method
+  - use existing with subroutine if available on target and use as fallback on MooX::Role::Parameterized::With
+  - update examples
+  
 0.200   Sat Dec 30 2023 13:12:22 CET
   - remove deprecated functions hasp and method
 

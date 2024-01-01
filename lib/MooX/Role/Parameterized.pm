@@ -5,20 +5,20 @@ use warnings;
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
 
+use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
 use Exporter        qw(import);
-use Module::Runtime qw(use_module);
 use Moo::Role       qw();
 
-use MooX::Role::Parameterized::Proxy;
+use MooX::Role::Parameterized::Mop;
 
-our $VERSION = "0.200";
+our $VERSION = "0.300";
 
 our @EXPORT = qw(role apply apply_roles_to_target);
 
 our $VERBOSE = 0;
 
-my %code_for;
+our %INFO;
 
 sub apply {
     carp "apply method is deprecated, please use 'apply_roles_to_target'"
@@ -30,7 +30,7 @@ sub apply {
 sub apply_roles_to_target {
     my ( $role, $args, %extra ) = @_;
 
-    return if !exists $code_for{$role};
+    return if !exists $INFO{$role};
 
     $args = [$args] if ref($args) ne ref( [] );
 
@@ -48,12 +48,12 @@ sub apply_roles_to_target {
         };
     }
 
-    my $p = MooX::Role::Parameterized::Proxy->new(
+    my $p = MooX::Role::Parameterized::Mop->new(
         target => $target,
         role   => $role
     );
 
-    $code_for{$role}->( $_, $p ) foreach ( @{$args} );
+    $INFO{$role}->{code_for}->( $_, $p ) foreach ( @{$args} );
 
     Moo::Role->apply_roles_to_package( $target, $role );
 }
@@ -61,7 +61,56 @@ sub apply_roles_to_target {
 sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     my $package = (caller)[0];
 
-    $code_for{$package} = shift;
+    $INFO{$package} = {
+        is_role  => 1,
+        code_for => shift,
+    };
+}
+
+sub is_role {
+    my ( $klass, $role ) = @_;
+
+    return !!( $INFO{$role} && $INFO{$role}->{is_role} );
+}
+
+sub build_apply_roles_to_package {
+    my ( $klass, $orig ) = @_;
+
+    return sub {
+        my $target = caller;
+
+        while (@_) {
+            my $role = shift;
+
+            eval { use_module($role) };
+
+            if ( MooX::Role::Parameterized->is_role($role) ) {
+                my $params = ( @_ && ref $_[0] eq 'HASH' ) ? shift : {};
+
+                $role->apply_roles_to_target( $params, target => $target );
+
+                next;
+            }
+
+            if ( defined $orig && ref $orig eq 'CODE' ) {
+                $orig->($role);
+
+                next;
+            }
+
+            if ( Moo::Role->is_role($role) ) {
+                Moo::Role->apply_roles_to_package( $target, $role );
+                eval {
+                    Moo::Role->_maybe_reset_handlemoose($target);    ##no critic(Subroutines::ProtectPrivateSubs)
+                };
+
+                next;
+            }
+
+            croak "Can't apply role to '${target}' - '${role}' is neither a "
+              . "MooX::Role::Parameterized, Moo::Role or Role::Tiny role";
+        }
+    };
 }
 
 1;
@@ -72,6 +121,88 @@ __END__
 MooX::Role::Parameterized - roles with composition parameters
 
 =head1 SYNOPSIS
+
+    package Counter;
+    use Moo::Role;
+    use MooX::Role::Parameterized;
+    
+    role {
+        my ($p, $mop) = @_;
+    
+        my $name = $p->{name};
+    
+        $mop->has($name => (
+            is      => 'rw',
+            default => sub { 0 },
+        ));
+    
+        $mop->method("increment_$name" => sub {
+            my $self = shift;
+            $self->$name($self->$name + 1);
+        });
+    
+        $mop->method("reset_$name" => sub {
+            my $self = shift;
+            $self->$name(0);
+        });
+    };
+    
+    package MyGame::Weapon;
+    use Moo;
+    use MooX::Role::Parameterized::With;
+    
+    with Counter => {          # injects 'enchantment' attribute and
+        name => 'enchantment', # methods increment_enchantment (setter)
+    };                         # reset_enchantment (set to zero)
+    
+    package MyGame::Wand;
+    use Moo;
+    use MooX::Role::Parameterized::With;
+
+    with Counter => {         # injects 'zapped' attribute and
+        name => 'zapped',     # methods increment_zapped (setter)
+    };                        # reset_zapped (set to zero)
+
+=head1 DESCRIPTION
+
+It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
+
+=head1 FUNCTIONS
+
+This package exports the following subroutines: C<role>, C<apply_roles_to_target> and C<apply>.
+
+=head2 role
+
+This function accepts just B<one> code block. Will execute this code then we apply the Role in the 
+target class, and will receive the parameter list + one B<mop> object.
+
+The B<mop> object is a proxy to the target class. 
+
+It offer a better way to call C<has>, C<after>, C<before>, C<around>, C<with> and C<requires> without side effects. 
+
+Use C<method> to inject a new method and C<meta> to access TARGET_PACKAGE->meta
+
+Please use:
+
+  my ($p, $mop) = @_;
+  ...
+  $mop->has($p->{attribute} =>(...));
+
+  $mop->method(name => sub { ... });
+
+  $mop->meta->make_immutable;
+
+=head2 apply
+
+Alias to C<apply_roles_to_target>
+
+=head2 apply_roles_to_target
+
+When called, will apply the C</role> on the current package. The behavior depends of the parameter list.
+
+This will install the role in the target package. Does not need call C<with>.
+
+Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an B<arrayref>.
 
     package My::Role;
 
@@ -91,17 +222,6 @@ MooX::Role::Parameterized - roles with composition parameters
     package My::Class;
 
     use Moo;
-
-    use MooX::Role::Parameterized::With;
-
-    with 'My::Role' => {
-        attr   => 'baz',
-        method => 'run'
-    };
-
-    package My::OldClass;
-
-    use Moo;
     use My::Role;
 
     My::Role->apply_roles_to_target([{ # original way of add this role
@@ -111,41 +231,15 @@ MooX::Role::Parameterized - roles with composition parameters
      ,                                 # and if the apply receives one arrayref
     {   attr   => 'bam',               # will call the role block multiple times.
         method => 'jump'               # PLEASE CALL apply once
-    }]);      
+    }]);   
 
-=head1 DESCRIPTION
+=head1 STATIC METHOS
 
-It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
+=head2 is_role
 
-=head1 FUNCTIONS
+Returns true if the package is a L<MooX::Role::Parameterized>.
 
-This package exports four subroutines: C<role>, C<apply_roles_to_target> and C<apply>.
-
-=head2 role
-
-This function accepts just B<one> code block. Will execute this code then we apply the Role in the 
-target class, and will receive the parameter list + one B<mop> object.
-
-The B<mop> object is a proxy to the target class. It offer a better way to call C<has>, C<requires> or C<after> without side effects. 
-
-Please do
-
-  my ($p, $mop) = @_;
-  ...
-  $mop->has($p->{attribute} =>(...));
-
-
-=head2 apply
-
-Alias to L<apply_roles_to_target>
-
-=head2 apply_roles_to_target
-
-When called, will apply the L</role> on the current package. The behavior depends of the parameter list.
-
-This will install the role in the target package. Does not need call C<with>.
-
-Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an B<arrayref>.
+  MooX::Role::Parameterized->is_role("My::Role");
 
 =head1 DEPRECATED FUNCTIONS
 
@@ -196,11 +290,8 @@ Ed J <mohawk2@users.noreply.github.com>
 
 =back
 
-  - add support to perl 5.8 (thanks @mohawk2)
-  - add a with keyword (thanks @perlancar)
-  - quote bareword role name (thanks @choroba)
-
 =head1 LICENSE
+
 The MIT License
  
  Permission is hereby granted, free of charge, to any person
