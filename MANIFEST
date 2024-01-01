@@ -1,9 +1,10 @@
 Changelog
 CODE_OF_CONDUCT.md
 CONTRIBUTING.pod
+examples/moosex-role-parameterized.pl
 examples/task-1-weekly-challenge-122.pl
 lib/MooX/Role/Parameterized.pm
-lib/MooX/Role/Parameterized/Proxy.pm
+lib/MooX/Role/Parameterized/Mop.pm
 lib/MooX/Role/Parameterized/With.pm
 LICENSE
 Makefile.PL
