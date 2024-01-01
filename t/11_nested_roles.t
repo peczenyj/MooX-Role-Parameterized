@@ -58,9 +58,9 @@ use Test::More;
 
     with "Some::Role::B" => {
         attr             => 'foo',
-        requires         => 'xxx',
+        requires         => 'yyy',
         another_attr     => 'bar',
-        another_requires => 'yyy',
+        another_requires => 'xxx',
     };
 
     sub yyy { }

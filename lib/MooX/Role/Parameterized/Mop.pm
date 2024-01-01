@@ -56,17 +56,9 @@ sub meta {
 }
 
 sub requires {
-    my $self   = shift;
-    my $target = $self->{target};
-    my $role   = $self->{role};
+    my $self = shift;
 
-    if ( $target->can('requires') ) {
-        goto &{ ${target} . '::requires' };
-    }
-
-    my $required_method = shift;
-    croak "Can't apply ${role} to ${target} - missing '${required_method}'"
-      if !$target->can($required_method);
+    goto &{ $self->{role} . '::requires' };
 }
 
 sub method {
@@ -76,11 +68,13 @@ sub method {
     carp("method ${target}::${name} already exists, overriding...")
       if $MooX::Role::Parameterized::VERBOSE && $target->can($name);
 
-    no strict 'refs';
-    no warnings 'redefine';
-    use warnings FATAL => 'uninitialized';
+    {
+        no strict 'refs';
+        no warnings 'redefine';
+        use warnings FATAL => 'uninitialized';
 
-    *{ ${target} . '::' . ${name} } = $code;
+        *{ ${target} . '::' . ${name} } = $code;
+    }
 }
 
 1;
