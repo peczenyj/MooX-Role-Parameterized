@@ -2,7 +2,8 @@ package MooX::Role::Parameterized::Mop;
 
 use strict;
 use warnings;
-use Carp qw(croak);
+use Carp         qw(croak);
+use Scalar::Util qw(blessed);
 
 our $VERSION = "0.2O0";
 
@@ -12,8 +13,9 @@ our $VERSION = "0.2O0";
 
 L<MooX::Role::Parameterized::Mop> is a proxy to the target class. 
 
-This proxy offer has, with, before, around, after, requires and method - to avoid inject magic around the L<apply>
+This proxy offer C<has>, C<with>, C<before>, C<around>, C<after>, C<requires> and C<method> to avoid inject magic around the L<apply>
 
+It also provides C<meta> as an alias of TARGET_PACKAGE->meta
 =cut
 
 sub new {
@@ -45,6 +47,12 @@ sub around {
 sub after {
     my $self = shift;
     goto &{ $self->{target} . '::after' };
+}
+
+sub meta {
+    my $self = shift;
+
+    return $self->{target}->meta;
 }
 
 sub requires {

@@ -167,7 +167,7 @@ The B<mop> object is a proxy to the target class.
 
 It offer a better way to call C<has>, C<after>, C<before>, C<around>, C<with> and C<requires> without side effects. 
 
-Use C<method> to inject a new method.
+Use C<method> to inject a new method and C<meta> to access TARGET_PACKAGE->meta
 
 Please do
 
@@ -176,6 +176,8 @@ Please do
   $mop->has($p->{attribute} =>(...));
 
   $mop->method(name => sub { ... });
+
+  $mop->meta->make_immutable;
 
 
 =head2 apply

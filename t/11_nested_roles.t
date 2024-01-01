@@ -40,6 +40,8 @@ use Test::More;
                 requires => $params->{requires},
             }
         );
+
+        $mop->meta->make_immutable;    # nop
     };
 
     sub xxx { }
