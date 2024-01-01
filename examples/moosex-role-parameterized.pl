@@ -53,7 +53,7 @@ say "starting with:";
 say "weapon has ", $weapon->enchantment;
 say "wand has ",   $wand->zapped;
 
-$weapon->increment_enchantment(4);
+$weapon->increment_enchantment;
 $wand->reset_zapped;
 
 say "";
