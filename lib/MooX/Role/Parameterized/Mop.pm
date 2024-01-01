@@ -1,4 +1,4 @@
-package MooX::Role::Parameterized::Proxy;
+package MooX::Role::Parameterized::Mop;
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ our $VERSION = "0.2O0";
 
 =head1 DESCRIPTION
 
-L<MooX::Role::Parameterized::Proxy> is a proxy to the target class. 
+L<MooX::Role::Parameterized::Mop> is a proxy to the target class. 
 
 This proxy offer has, with, before, around, after, requires and method - to avoid inject magic around the L<apply>
 

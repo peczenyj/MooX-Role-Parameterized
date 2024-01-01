@@ -9,7 +9,7 @@ use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
 use Exporter        qw(import);
 
-use MooX::Role::Parameterized::Proxy;
+use MooX::Role::Parameterized::Mop;
 
 our $VERSION = "0.200";
 
@@ -47,7 +47,7 @@ sub apply_roles_to_target {
         };
     }
 
-    my $p = MooX::Role::Parameterized::Proxy->new(
+    my $p = MooX::Role::Parameterized::Mop->new(
         target => $target,
         role   => $role
     );
@@ -163,13 +163,19 @@ This package exports the following subroutines: C<role>, C<apply_roles_to_target
 This function accepts just B<one> code block. Will execute this code then we apply the Role in the 
 target class, and will receive the parameter list + one B<mop> object.
 
-The B<mop> object is a proxy to the target class. It offer a better way to call C<has>, C<requires> or C<after> without side effects. 
+The B<mop> object is a proxy to the target class. 
+
+It offer a better way to call C<has>, C<after>, C<before>, C<around>, C<with> and C<requires> without side effects. 
+
+Use C<method> to inject a new method.
 
 Please do
 
   my ($p, $mop) = @_;
   ...
   $mop->has($p->{attribute} =>(...));
+
+  $mop->method(name => sub { ... });
 
 
 =head2 apply
