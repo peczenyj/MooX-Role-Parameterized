@@ -95,8 +95,8 @@ sub build_apply_roles_to_package {
                 next;
             }
 
-            croak "Can't apply role to $target: $role is neither a "
-              . "MooX::Role::Parameterized/Moo::Role/Role::Tiny role";
+            croak "Can't apply role to '${target}' - '${role}' is neither a "
+              . "MooX::Role::Parameterized, Moo::Role or Role::Tiny role";
         }
     };
 }
