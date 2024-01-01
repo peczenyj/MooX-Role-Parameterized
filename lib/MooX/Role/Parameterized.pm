@@ -83,7 +83,7 @@ sub build_apply_roles_to_package {
 
             eval { use_module($role) };
 
-            if ( $role->can("apply_roles_to_target") ) {
+            if ( MooX::Role::Parameterized->is_role($role) ) {
                 my $params = ( @_ && ref $_[0] eq 'HASH' ) ? shift : {};
 
                 $role->apply_roles_to_target( $params, target => $target );

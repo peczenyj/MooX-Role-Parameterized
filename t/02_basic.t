@@ -29,8 +29,10 @@ ok $foo->can('run'), 'should can run';
 is $foo->run, 1024, 'should call run';
 
 ok( MooX::Role::Parameterized->is_role("Bar"),
-    'Bar is a MooX::Role::Parameterized role' );
+    'Bar is a MooX::Role::Parameterized role'
+);
 ok( !MooX::Role::Parameterized->is_role("Foo"),
-    'Foo is not a MooX::Role::Parameterized role' );
+    'Foo is not a MooX::Role::Parameterized role'
+);
 
 done_testing;
