@@ -3,7 +3,7 @@ package MooX::Role::Parameterized::With;
 use strict;
 use warnings;
 
-our $VERSION = "0.200";
+our $VERSION = "0.300";
 
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
