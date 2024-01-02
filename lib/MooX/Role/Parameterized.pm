@@ -13,7 +13,7 @@ use Moo::Role       qw();
 use MooX::Role::Parameterized::Mop;
 use MooX::Role::Parameterized::Params;
 
-our $VERSION = "0.300";
+our $VERSION = "0.500";
 
 our @EXPORT = qw(parameter role apply apply_roles_to_target);
 
@@ -36,18 +36,6 @@ sub apply_roles_to_target {
     $args = [$args] if ref($args) ne ref( [] );
 
     my $target = defined( $extra{target} ) ? $extra{target} : caller;
-
-    {
-        no strict 'refs';
-        no warnings 'redefine';
-
-        *{ $role . '::hasp' } = sub {
-            croak 'hasp deprecated, use $mop->has instead.';
-        };
-        *{ $role . '::method' } = sub {
-            croak 'method deprecated, use $mop->method instead.';
-        };
-    }
 
     my $mop = MooX::Role::Parameterized::Mop->new(
         target => $target,

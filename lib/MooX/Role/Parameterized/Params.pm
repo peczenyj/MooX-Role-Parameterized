@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Moo;
 
-our $VERSION = "0.3O0";
+our $VERSION = "0.5O0";
 
 # ABSTRACT: allow create role parameter objects.
 
