@@ -13,7 +13,7 @@ use Moo::Role       qw();
 use MooX::Role::Parameterized::Mop;
 use MooX::Role::Parameterized::Params;
 
-our $VERSION = "0.300";
+our $VERSION = "0.500";
 
 our @EXPORT = qw(parameter role apply apply_roles_to_target);
 
