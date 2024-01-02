@@ -11,10 +11,11 @@ use Exporter        qw(import);
 use Moo::Role       qw();
 
 use MooX::Role::Parameterized::Mop;
+use MooX::Role::Parameterized::Params;
 
 our $VERSION = "0.300";
 
-our @EXPORT = qw(role apply apply_roles_to_target);
+our @EXPORT = qw(role apply apply_roles_to_target parameter);
 
 our $VERBOSE = 0;
 
@@ -48,12 +49,24 @@ sub apply_roles_to_target {
         };
     }
 
-    my $p = MooX::Role::Parameterized::Mop->new(
+    my $mop = MooX::Role::Parameterized::Mop->new(
         target => $target,
         role   => $role
     );
 
-    $INFO{$role}->{code_for}->( $_, $p ) foreach ( @{$args} );
+    my $parameter_klass = $INFO{$role}{parameters_klass};
+
+    foreach my $params ( @{$args} ) {
+        if ($parameter_klass) {
+            eval { $params = $parameter_klass->new($params); };
+
+            croak(
+                "unable to apply parameterized role '${role}' to '${target}': $@"
+            ) if $@;
+        }
+
+        $INFO{$role}->{code_for}->( $params, $mop );
+    }
 
     Moo::Role->apply_roles_to_package( $target, $role );
 }
@@ -61,10 +74,18 @@ sub apply_roles_to_target {
 sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     my $package = (caller)[0];
 
-    $INFO{$package} = {
-        is_role  => 1,
-        code_for => shift,
-    };
+    $INFO{$package} ||= { is_role => 1 };
+    $INFO{$package}{code_for} = shift;
+}
+
+sub parameter {
+    my $package = (caller)[0];
+
+    $INFO{$package} ||= { is_role => 1 };
+
+    $INFO{$package}{parameters_klass} ||= create_parameters_klass($package);
+
+    $INFO{$package}{parameters_klass}->add_parameter(@_);
 }
 
 sub is_role {
@@ -77,7 +98,7 @@ sub build_apply_roles_to_package {
     my ( $klass, $orig ) = @_;
 
     return sub {
-        my $target = caller;
+        my $target = (caller)[0];
 
         while (@_) {
             my $role = shift;
