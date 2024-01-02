@@ -79,10 +79,11 @@ Redo from step 3.
     git checkout main
     # Bump version number
     $EDITOR lib/MooX/Role/Parameterized/Mop.pm
+    $EDITOR lib/MooX/Role/Parameterized/Params.pm
     $EDITOR lib/MooX/Role/Parameterized/With.pm
     $EDITOR lib/MooX/Role/Parameterized.pm
     # Update changelog
-    $EDITOR Changes
+    $EDITOR Changelog
     # update readme
     git add .
     git commit
