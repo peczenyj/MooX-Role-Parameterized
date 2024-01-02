@@ -1,3 +1,7 @@
+0.500   Tue Jan 02 2024 14:12:22 CET
+  - add experimental feature; parameter keyword
+  - small fixed in pod and documentation
+
 0.300   Mon Jan 01 2024 13:12:22 CET
   - small changes in POD
   - add meta method in mop
@@ -19,7 +23,7 @@
   - fallback to Role::Tiny when applying (thanks @perlancar)
   - fix missing prereqs
 
-0.082	Ter 22 Dez 2015 16:49:22 CET
+0.082	Tue 22 Dez 2015 16:49:22 CET
   - fix meta ( bugtracker, issue tracker)
 
 0.081	Mon 21 Dez 2015 16:49:22 CET
