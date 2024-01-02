@@ -15,7 +15,7 @@ use MooX::Role::Parameterized::Params;
 
 our $VERSION = "0.300";
 
-our @EXPORT = qw(role apply apply_roles_to_target parameter);
+our @EXPORT = qw(parameter role apply apply_roles_to_target);
 
 our $VERBOSE = 0;
 
@@ -75,6 +75,10 @@ sub role(&) {    ##no critic (Subroutines::ProhibitSubroutinePrototypes)
     my $package = (caller)[0];
 
     $INFO{$package} ||= { is_role => 1 };
+
+    croak "role subroutine called multiple times on '$package'"
+      if exists $INFO{$package}{code_for};
+
     $INFO{$package}{code_for} = shift;
 }
 
@@ -145,12 +149,19 @@ MooX::Role::Parameterized - roles with composition parameters
 
     package Counter;
     use Moo::Role;
-    use MooX::Role::Parameterized;
-    
+    use MooX::Role::Parameterized;    
+    use Types::Standard qw( Str );
+
+    parameter name => (
+        is       => 'ro',  # this is mandatory on Moo
+        isa      => Str,   # optional type
+        required => 1,     # mark the parameter "name" as "required"
+    );
+
     role {
-        my ($p, $mop) = @_;
-    
-        my $name = $p->{name};
+        my ( $p, $mop ) = @_;
+
+        my $name = $p->name; # $p->{name} will also work
     
         $mop->has($name => (
             is      => 'rw',
@@ -173,7 +184,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
     
     with Counter => {          # injects 'enchantment' attribute and
-        name => 'enchantment', # methods increment_enchantment (setter)
+        name => 'enchantment', # methods increment_enchantment ( +1 )
     };                         # reset_enchantment (set to zero)
     
     package MyGame::Wand;
@@ -181,7 +192,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
 
     with Counter => {         # injects 'zapped' attribute and
-        name => 'zapped',     # methods increment_zapped (setter)
+        name => 'zapped',     # methods increment_zapped ( +1 )
     };                        # reset_zapped (set to zero)
 
 =head1 DESCRIPTION

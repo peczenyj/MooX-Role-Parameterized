@@ -1,11 +1,18 @@
 package Counter;
 use Moo::Role;
 use MooX::Role::Parameterized;
+use Types::Standard qw( Str );
+
+parameter name => (
+    is       => 'ro',    # this is mandatory on Moo
+    isa      => Str,     # optional type
+    required => 1,       # mark the parameter "name" as "required"
+);
 
 role {
     my ( $p, $mop ) = @_;
 
-    my $name = $p->{name};
+    my $name = $p->name;    # $p->{name} will also work
 
     $mop->has(
         $name => (
@@ -33,13 +40,17 @@ package MyGame::Weapon;
 use Moo;
 use MooX::Role::Parameterized::With;
 
-with Counter => { name => 'enchantment' };
+with Counter => {    # injects 'enchantment' attribute and
+    name => 'enchantment',    # methods increment_enchantment ( +1 )
+};    # reset_enchantment (set to zero)
 
 package MyGame::Wand;
 use Moo;
 use MooX::Role::Parameterized::With;
 
-with Counter => { name => 'zapped' };
+with Counter => {    # injects 'zapped' attribute and
+    name => 'zapped',    # methods increment_zapped ( +1 )
+};    # reset_zapped (set to zero)
 
 package main;
 use strict;
