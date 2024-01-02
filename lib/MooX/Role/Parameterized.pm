@@ -201,12 +201,18 @@ It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
 
 =head1 FUNCTIONS
 
-This package exports the following subroutines: C<role>, C<apply_roles_to_target> and C<apply>.
+This package exports the following subroutines: C<parameter>, C<role>, C<apply_roles_to_target> and C<apply>.
+
+=head2 parameter
+
+This function receive the same parameter as C<Moo::has>. If present, the parameter hash reference will be blessed as a Moo class. This is useful to add default values or set some parameters as required.
 
 =head2 role
 
 This function accepts just B<one> code block. Will execute this code then we apply the Role in the 
-target class, and will receive the parameter list + one B<mop> object.
+target classand will receive the parameter hash reference + one B<mop> object.
+
+The B<params> reference will be blessed if there is some parameter defined on this role.
 
 The B<mop> object is a proxy to the target class. 
 
@@ -216,9 +222,9 @@ Use C<method> to inject a new method and C<meta> to access TARGET_PACKAGE->meta
 
 Please use:
 
-  my ($p, $mop) = @_;
+  my ($params, $mop) = @_;
   ...
-  $mop->has($p->{attribute} =>(...));
+  $mop->has($params->{attribute} =>(...));
 
   $mop->method(name => sub { ... });
 

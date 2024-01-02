@@ -17,11 +17,18 @@ MooX::Role::Parameterized - roles with composition parameters
     package Counter;
     use Moo::Role;
     use MooX::Role::Parameterized;
-    
+    use Types::Standard qw( Str );
+
+    parameter name => (
+        is       => 'ro',  # this is mandatory on Moo
+        isa      => Str,   # optional type
+        required => 1,     # mark the parameter "name" as "required"
+    );
+
     role {
-        my ($p, $mop) = @_;
-    
-        my $name = $p->{name};
+        my ( $p, $mop ) = @_;
+
+        my $name = $p->name; # $p->{name} will also work
     
         $mop->has($name => (
             is      => 'rw',
@@ -44,7 +51,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
     
     with Counter => {          # injects 'enchantment' attribute and
-        name => 'enchantment', # methods increment_enchantment (setter)
+        name => 'enchantment', # methods increment_enchantment (+1)
     };                         # reset_enchantment (set to zero)
     
     package MyGame::Wand;
@@ -52,7 +59,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
 
     with Counter => {         # injects 'zapped' attribute and
-        name => 'zapped',     # methods increment_zapped (setter)
+        name => 'zapped',     # methods increment_zapped (+1)
     };                        # reset_zapped (set to zerà)
 
 ## DESCRIPTION
@@ -61,12 +68,18 @@ It is an **experimental** port of [MooseX::Role::Parameterized](https://metacpan
 
 ## FUNCTIONS
 
-This package exports the following subroutines: `role`, `apply_roles_to_target` and `apply`.
+This package exports the following subroutines: `parameter`, `role`, `apply_roles_to_target` and `apply`.
+
+### parameter
+
+This function receive the same parameter as `Moo::has`. If present, the parameter hash reference will be blessed as a Moo class. This is useful to add default values or set some parameters as required.
 
 ### role
 
-This function accepts just **one** code block. Will execute this code then we apply the Role in the 
-target class, and will receive the parameter list + one **mop** object.
+This function accepts just **one** code block. Will execute this code then we apply the Role in the
+target class and will receive the parameter hash reference + one **mop** object.
+
+The **params** reference will be blessed if there is some parameter defined on this role.
 
 The **mop** object is a proxy to the target class.
 
@@ -76,13 +89,13 @@ Use `method` to inject a new method and `meta` to access `TARGET_PACKAGE->meta`
 
 Please use:
 
-  my ($p, $mop) = @_;
-  ...
-  $mop->has($p->{attribute} =>(...));
+    my ($p, $mop) = @_;
+    ...
+    $mop->has($p->{attribute} =>(...));
 
-  $mop->method(name => sub { ... });
+    $mop->method(name => sub { ... });
 
-  $mop->meta->make_immutable;
+    $mop->meta->make_immutable;
 
 ### apply
 
@@ -124,7 +137,6 @@ Important, if you want to apply the role multiple times, like to create multiple
     {   attr   => 'bam',               # will call the role block multiple times.
         method => 'jump'               # PLEASE CALL apply once
     }]);
-
 
 ## MooX::Role::Parameterized::VERBOSE
 
