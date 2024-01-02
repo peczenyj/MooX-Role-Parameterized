@@ -37,18 +37,6 @@ sub apply_roles_to_target {
 
     my $target = defined( $extra{target} ) ? $extra{target} : caller;
 
-    {
-        no strict 'refs';
-        no warnings 'redefine';
-
-        *{ $role . '::hasp' } = sub {
-            croak 'hasp deprecated, use $mop->has instead.';
-        };
-        *{ $role . '::method' } = sub {
-            croak 'method deprecated, use $mop->method instead.';
-        };
-    }
-
     my $mop = MooX::Role::Parameterized::Mop->new(
         target => $target,
         role   => $role
