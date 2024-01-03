@@ -63,6 +63,24 @@ use Test::More;
     
 {
 
+    package Some::Parametric::Role::With::Default::Parameters;
+    use Moo::Role;
+    use MooX::Role::Parameterized;
+
+    parameter foo => ( is => 'ro', default => sub {"bar"} );
+
+    role {
+        my ( $params, $mop ) = @_;
+
+        my $foo = $params->foo;
+
+        $mop->has( $foo => ( is => 'rw', required => 1 ) );
+    };
+    1;
+}
+
+{
+
     package MyGame::Weapon;
     use Moo;
     use MooX::Role::Parameterized::With;
