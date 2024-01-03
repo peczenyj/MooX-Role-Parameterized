@@ -11,7 +11,6 @@ use Exporter        qw(import);
 use Moo::Role       qw();
 
 use MooX::Role::Parameterized::Mop;
-use MooX::Role::Parameterized::Params;
 
 our $VERSION = "0.500";
 
@@ -48,11 +47,21 @@ sub apply_roles_to_target {
             role   => $role
         );
 
-        my $parameter_klass = $INFO{$role}{parameters_klass};
+        if (exists $INFO{$role}{parameters_definition}) {
+            my $parameters_definition = $INFO{$role}{parameters_definition};
+
+            $INFO{$role}{parameter_definition_klass} = _create_parameters_klass($role, $parameters_definition);
+
+            delete $INFO{$role}{parameters_definition};
+        }
+
+        my $parameter_definition_klass = $INFO{$role}{parameter_definition_klass};
 
         foreach my $params ( @{$args} ) {
-            if ($parameter_klass) {
-                eval { $params = $parameter_klass->new($params); };
+            if (defined $parameter_definition_klass) {
+                eval { 
+                    $params = $parameter_definition_klass->new($params);
+                };
 
                 croak(
                     "unable to apply parameterized role '${role}' to '${target}': $@"
@@ -82,9 +91,7 @@ sub parameter {
 
     $INFO{$package} ||= { is_role => 1 };
 
-    $INFO{$package}{parameters_klass} ||= create_parameters_klass($package);
-
-    $INFO{$package}{parameters_klass}->add_parameter(@_);
+    push @{$INFO{$package}{parameters_definition} ||= []}, \@_;
 }
 
 sub is_role {
@@ -131,6 +138,26 @@ sub build_apply_roles_to_package {
               . "MooX::Role::Parameterized, Moo::Role or Role::Tiny role";
         }
     };
+}
+
+sub _create_parameters_klass {
+    my ( $package, $args ) = @_;
+
+    my $klass = "${package}::__MOOX_ROLE_PARAMETERIZED_PARAMS__";
+
+    eval <<"END_OF_CLASS";    ##no critic(BuiltinFunctions::ProhibitStringyEval)
+package $klass;
+
+use Moo;
+
+END_OF_CLASS
+
+    Carp::croak($@) if $@;
+
+    require MooX::Role::Parameterized::Params;
+    MooX::Role::Parameterized::Params->apply_roles_to_target({ parameters_definition => $args }, target => $klass);
+
+    return $klass;
 }
 
 1;
