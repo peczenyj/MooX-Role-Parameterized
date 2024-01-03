@@ -18,6 +18,21 @@ use lib 't/lib';
     1;
 }
 
+subtest "FooWith" => sub {
+
+    my $foo = FooWith->new( foo => 1, bar => 2, baz => 3 );
+
+    isa_ok $foo, 'FooWith', 'foo';
+    ok $foo->DOES('Bar'), 'foo should does Bar';
+    is $foo->foo, 1, 'should has foo';
+    is $foo->bar, 2, 'should has bar ( from Role )';
+    is $foo->baz, 3, 'should has baz ( from parameterized Role)';
+    can_ok( $foo, 'run' );
+    is $foo->run, 1024, 'should call run';
+
+    done_testing;
+};
+
 {
 
     package FooWith2;
@@ -33,21 +48,6 @@ use lib 't/lib';
     1;
 }
 
-subtest "FooWith" => sub {
-
-    my $foo = FooWith->new( foo => 1, bar => 2, baz => 3 );
-
-    isa_ok $foo, 'FooWith', 'foo';
-    ok $foo->DOES('Bar'), 'foo should does Bar';
-    is $foo->foo, 1, 'should has foo';
-    is $foo->bar, 2, 'should has bar ( from Role )';
-    is $foo->baz, 3, 'should has baz ( from parameterized Role)';
-    ok $foo->can('run'), 'should can run';
-    is $foo->run, 1024, 'should call run';
-
-    done_testing;
-};
-
 subtest "FooWith2" => sub {
 
     my $foo = FooWith2->new( foo => 1, bar => 2, baz => 3, bam => 4 );
@@ -57,11 +57,48 @@ subtest "FooWith2" => sub {
     is $foo->foo, 1, 'should has foo';
     is $foo->bar, 2, 'should has bar ( from Role )';
     is $foo->baz, 3, 'should has baz ( from parameterized Role)';
-    is $foo->bam, 4, 'should has baù ( from parameterized Role)';
-    ok $foo->can('run'),  'should can run';
-    ok $foo->can('doit'), 'should can run';
+    is $foo->bam, 4, 'should has bam ( from parameterized Role)';
+    can_ok( $foo, 'run', 'doit' );
     is $foo->run,  1024, 'should call run';
     is $foo->doit, 1024, 'should call doit';
+
+    done_testing;
+};
+
+{
+
+    package FooWithArrayRef;
+
+    use Moo qw(has);
+    use MooX::Role::Parameterized::With;
+
+    with Bar => [
+        { attr => 'baz', method => 'run' },
+        { attr => 'bam', method => 'doit' }
+      ],
+      Bar => { attr => 'bum', method => 'lol' };
+
+    has foo => ( is => 'ro' );
+
+    1;
+}
+
+subtest "FooWiFooWithArrayRefth2" => sub {
+
+    my $foo =
+      FooWithArrayRef->new( foo => 1, bar => 2, baz => 3, bam => 4, bum => 5 );
+
+    isa_ok $foo, 'FooWithArrayRef', 'foo';
+    ok $foo->DOES('Bar'), 'foo should does Bar';
+    is $foo->foo, 1, 'should has foo';
+    is $foo->bar, 2, 'should has bar ( from Role )';
+    is $foo->baz, 3, 'should has baz ( from parameterized Role)';
+    is $foo->bam, 4, 'should has bam ( from parameterized Role)';
+    is $foo->bum, 5, 'should has bum ( from parameterized Role)';
+    can_ok( $foo, 'run', 'doit', 'lol' );
+    is $foo->run,  1024, 'should call run';
+    is $foo->doit, 1024, 'should call doit';
+    is $foo->lol,  1024, 'should call lol';
 
     done_testing;
 };
@@ -113,7 +150,7 @@ subtest "FooWithRoleTiny" => sub {
     is $foo->foo, 1,                          'should has foo';
     is $foo->bar, 'not what you expects',     'should has bar ( from Role )';
     is $foo->baz, 'not what you expects too', 'should has baz ( from Role)';
-    ok $foo->can('run'), 'should can run';
+    can_ok( $foo, 'run' );
     is $foo->run, 1024, 'should call run';
 
     done_testing;

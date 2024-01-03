@@ -39,14 +39,20 @@ MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
     package FooWith;
 
     use Moo;
-    use MooX::Role::Parameterized::With;
-    
-    with Bar => {
+    use MooX::Role::Parameterized::With; # overrides Moo::with
+
+    with "Bar" => {           # apply parameterized role Bar once
         attr => 'baz',
         method => 'run'
-    }, Other::Role => { ... };
+    }, "Other::Role" => [     # apply parameterized role "Other::Role" twice
+        { ... },              # with different parameters
+        { ... },
+    ],
+    "Other::Role" => { ...},  # apply it again
+    "Some::Moo::Role",
+    "Some::Role::Tiny";
 
-    has foo => ( is => 'ro');
+    has foo => ( is => 'ro'); # continue with normal Moo code
 
 =head1 DESCRIPTION
 

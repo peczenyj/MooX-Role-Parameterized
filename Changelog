@@ -1,4 +1,5 @@
 0.501   Wed Jan 03 2024 18:12:22 CET
+  - must support arrayref while set parameterized roles, instead repeat the same role name twice
   - fix bug creating a parameterized role with parameter but no role block throw exception
   - fix bug unexpected error while set a parameter in another role
   - make sure we can load a parameterized with no arguments no with keyword (like using default parameters)

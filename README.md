@@ -159,6 +159,26 @@ Deleted
 
 See [MooX::Role::Parameterized::With](https://metacpan.org/pod/MooX::Role::Parameterized::With) package to easily load and apply roles.
 
+
+Allow to do this:
+
+    package FooWith;
+
+    use Moo;
+    use MooX::Role::Parameterized::With; # overrides Moo::with
+
+    with "Bar" => {           # apply parameterized role Bar once
+        attr => 'baz',
+        method => 'run'
+    }, "Other::Role" => [     # apply parameterized role "Other::Role" twice
+        { ... },              # with different parameters
+        { ... },
+        ],
+        "Some::Moo::Role",
+        "Some::Role::Tiny";
+
+    has foo => ( is => 'ro'); # continue with normal Moo code
+
 ## SEE ALSO
 
 [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) - Moose version
