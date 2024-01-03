@@ -47,9 +47,10 @@ MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
     }, "Other::Role" => [     # apply parameterized role "Other::Role" twice
         { ... },              # with different parameters
         { ... },
-      ],
-      "Some::Moo::Role",
-      "Some::Role::Tiny";
+    ],
+    "Other::Role" => { ...},  # apply it again
+    "Some::Moo::Role",
+    "Some::Role::Tiny";
 
     has foo => ( is => 'ro'); # continue with normal Moo code
 

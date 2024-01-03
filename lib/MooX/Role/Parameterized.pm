@@ -238,34 +238,23 @@ This will install the role in the target package. Does not need call C<with>.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an B<arrayref>.
 
-    package My::Role;
-
-    use Moo::Role;
-    use MooX::Role::Parameterized;
-
-    role {
-        my ($params, $mop) = @_;
-
-        $mop->has( $params->{attr} => ( is => 'rw' ));
-
-        $mop->method($params->{method} => sub {
-            1024;
-        });
-    };
-
-    package My::Class;
+    package FooWith;
 
     use Moo;
-    use My::Role;
+    use MooX::Role::Parameterized::With; # overrides Moo::with
 
-    My::Role->apply_roles_to_target([{ # original way of add this role
-        attr   => 'baz',               # add attribute read-write called 'baz' 
-        method => 'run'                # add method called 'run' and return 1024 
-    }
-     ,                                 # and if the apply receives one arrayref
-    {   attr   => 'bam',               # will call the role block multiple times.
-        method => 'jump'               # PLEASE CALL apply once
-    }]);   
+    with "Bar" => {           # apply parameterized role Bar once
+        attr => 'baz',
+        method => 'run'
+    }, "Other::Role" => [     # apply parameterized role "Other::Role" twice
+        { ... },              # with different parameters
+        { ... },
+    ],
+    "Other::Role" => { ...},  # apply it again
+    "Some::Moo::Role",
+    "Some::Role::Tiny";
+
+    has foo => ( is => 'ro'); # continue with normal Moo code
 
 =head1 STATIC METHOS
 
