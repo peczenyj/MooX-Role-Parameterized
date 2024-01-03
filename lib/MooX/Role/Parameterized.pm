@@ -31,29 +31,36 @@ sub apply {
 sub apply_roles_to_target {
     my ( $role, $args, %extra ) = @_;
 
-    return if !exists $INFO{$role};
+    croak
+      "unable to apply parameterized role: not an MooX::Role::Parameterized"
+      if !__PACKAGE__->is_role($role);
 
     $args = [$args] if ref($args) ne ref( [] );
 
-    my $target = defined( $extra{target} ) ? $extra{target} : caller;
+    my $target = defined( $extra{target} ) ? $extra{target} : (caller)[0];
 
-    my $mop = MooX::Role::Parameterized::Mop->new(
-        target => $target,
-        role   => $role
-    );
+    if (   exists $INFO{$role}
+        && exists $INFO{$role}{code_for}
+        && ref $INFO{$role}{code_for} eq "CODE" )
+    {
+        my $mop = MooX::Role::Parameterized::Mop->new(
+            target => $target,
+            role   => $role
+        );
 
-    my $parameter_klass = $INFO{$role}{parameters_klass};
+        my $parameter_klass = $INFO{$role}{parameters_klass};
 
-    foreach my $params ( @{$args} ) {
-        if ($parameter_klass) {
-            eval { $params = $parameter_klass->new($params); };
+        foreach my $params ( @{$args} ) {
+            if ($parameter_klass) {
+                eval { $params = $parameter_klass->new($params); };
 
-            croak(
-                "unable to apply parameterized role '${role}' to '${target}': $@"
-            ) if $@;
+                croak(
+                    "unable to apply parameterized role '${role}' to '${target}': $@"
+                ) if $@;
+            }
+
+            $INFO{$role}{code_for}->( $params, $mop );
         }
-
-        $INFO{$role}->{code_for}->( $params, $mop );
     }
 
     Moo::Role->apply_roles_to_package( $target, $role );
