@@ -2,7 +2,7 @@ package MooX::Role::Parameterized::Params;
 
 use strict;
 use warnings;
-use Moo;
+use Moo::Role;
 
 our $VERSION = "0.5O0";
 
@@ -23,11 +23,16 @@ sub create_parameters_klass {
 
     my $klass = "${package}::__MOOX_ROLE_PARAMETERIZED_PARAMS__";
 
-    {
-        no strict 'refs';
+    eval <<"END_OF_CLASS";    ##no critic(BuiltinFunctions::ProhibitStringyEval)
+package $klass;
 
-        @{"${klass}::ISA"} = ('MooX::Role::Parameterized::Params');
-    }
+use Moo;
+
+with 'MooX::Role::Parameterized::Params';
+
+END_OF_CLASS
+
+    Carp::croak($@) if $@;
 
     return $klass;
 }
