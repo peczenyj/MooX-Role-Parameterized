@@ -13,9 +13,10 @@ WriteMakefile(
     MIN_PERL_VERSION   => 5.008,
     CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 0 },
     PREREQ_PM          => {
-        'Carp'            => 0,
-        'Module::Runtime' => 0,
-        'Moo'             => 0
+        'Carp'             => 0,
+        'Module::Runtime'  => 0,
+        'Moo'              => 2,
+        'MooX::BuildClass' => 0.213360,
     },
     TEST_REQUIRES => {
         'Test::Exception' => 0.43,

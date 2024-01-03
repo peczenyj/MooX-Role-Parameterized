@@ -9,11 +9,10 @@ use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
 use Exporter        qw(import);
 use Moo::Role       qw();
-
+use MooX::BuildClass;
 use MooX::Role::Parameterized::Mop;
-use MooX::Role::Parameterized::Params;
 
-our $VERSION = "0.500";
+our $VERSION = "0.501";
 
 our @EXPORT = qw(parameter role apply apply_roles_to_target);
 
@@ -31,29 +30,37 @@ sub apply {
 sub apply_roles_to_target {
     my ( $role, $args, %extra ) = @_;
 
-    return if !exists $INFO{$role};
+    croak
+      "unable to apply parameterized role: not an MooX::Role::Parameterized"
+      if !__PACKAGE__->is_role($role);
 
     $args = [$args] if ref($args) ne ref( [] );
 
-    my $target = defined( $extra{target} ) ? $extra{target} : caller;
+    my $target = defined( $extra{target} ) ? $extra{target} : (caller)[0];
 
-    my $mop = MooX::Role::Parameterized::Mop->new(
-        target => $target,
-        role   => $role
-    );
+    if (   exists $INFO{$role}
+        && exists $INFO{$role}{code_for}
+        && ref $INFO{$role}{code_for} eq "CODE" )
+    {
+        my $mop = MooX::Role::Parameterized::Mop->new(
+            target => $target,
+            role   => $role
+        );
 
-    my $parameter_klass = $INFO{$role}{parameters_klass};
+        my $parameter_definition_klass =
+          _fetch_parameter_definition_klass($role);
 
-    foreach my $params ( @{$args} ) {
-        if ($parameter_klass) {
-            eval { $params = $parameter_klass->new($params); };
+        foreach my $params ( @{$args} ) {
+            if ( defined $parameter_definition_klass ) {
+                eval { $params = $parameter_definition_klass->new($params); };
 
-            croak(
-                "unable to apply parameterized role '${role}' to '${target}': $@"
-            ) if $@;
+                croak(
+                    "unable to apply parameterized role '${role}' to '${target}': $@"
+                ) if $@;
+            }
+
+            $INFO{$role}{code_for}->( $params, $mop );
         }
-
-        $INFO{$role}->{code_for}->( $params, $mop );
     }
 
     Moo::Role->apply_roles_to_package( $target, $role );
@@ -75,9 +82,7 @@ sub parameter {
 
     $INFO{$package} ||= { is_role => 1 };
 
-    $INFO{$package}{parameters_klass} ||= create_parameters_klass($package);
-
-    $INFO{$package}{parameters_klass}->add_parameter(@_);
+    push @{ $INFO{$package}{parameters_definition} ||= [] }, \@_;
 }
 
 sub is_role {
@@ -124,6 +129,44 @@ sub build_apply_roles_to_package {
               . "MooX::Role::Parameterized, Moo::Role or Role::Tiny role";
         }
     };
+}
+
+
+sub _fetch_parameter_definition_klass {
+    my $role = shift;
+
+    return if !exists $INFO{$role};
+
+    if ( !exists $INFO{$role}{parameter_definition_klass} ) {
+        return if !exists $INFO{$role}{parameters_definition};
+
+        my $parameters_definition = $INFO{$role}{parameters_definition};
+
+        $INFO{$role}{parameter_definition_klass} =
+          _create_parameters_klass( $role, $parameters_definition );
+
+        delete $INFO{$role}{parameters_definition};
+    }
+
+    return $INFO{$role}{parameter_definition_klass};
+}
+
+sub _create_parameters_klass {
+    my ( $package, $parameters_definition ) = @_;
+
+    my $klass = "${package}::__MOOX_ROLE_PARAMETERIZED_PARAMS__";
+
+    return $klass if $klass->isa("Moo::Object");
+
+    my @klass_definition = ( extends => "Moo::Object" );
+
+    foreach my $parameter_definition ( @{$parameters_definition} ) {
+        push @klass_definition, has => $parameter_definition;
+    }
+
+    BuildClass $klass => @klass_definition;
+
+    return $klass;
 }
 
 1;
