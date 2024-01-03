@@ -8,7 +8,7 @@ use warnings;
 use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
 use Exporter        qw(import);
-use Moo::Role       qw();
+use Moo::Role 2;
 
 use MooX::Role::Parameterized::Mop;
 
@@ -140,22 +140,22 @@ sub build_apply_roles_to_package {
     };
 }
 
+use MooX::BuildClass;
+
 sub _create_parameters_klass {
-    my ( $package, $args ) = @_;
+    my ( $package, $parameters_definition ) = @_;
 
     my $klass = "${package}::__MOOX_ROLE_PARAMETERIZED_PARAMS__";
 
     return $klass if $klass->isa("Moo::Object");
 
-    {
-        Moo::_Utils::_set_loaded($klass);    ##no critic (Subroutines::ProtectPrivateSubs)
-        Moo->_install_subs($klass);          ##no critic(Subroutines::ProtectPrivateSub)
-        Moo->make_class($klass);
+    my @klass_definition = ( extends => "Moo::Object" );
+
+    foreach my $parameter_definition ( @{$parameters_definition} ) {
+        push @klass_definition, has => $parameter_definition;
     }
 
-    require MooX::Role::Parameterized::Params;
-    MooX::Role::Parameterized::Params->apply_roles_to_target(
-        { parameters_definition => $args }, target => $klass );
+    BuildClass $klass => @klass_definition;
 
     return $klass;
 }

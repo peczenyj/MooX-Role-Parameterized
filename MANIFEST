@@ -6,7 +6,6 @@ examples/parameters.pl
 examples/task-1-weekly-challenge-122.pl
 lib/MooX/Role/Parameterized.pm
 lib/MooX/Role/Parameterized/Mop.pm
-lib/MooX/Role/Parameterized/Params.pm
 lib/MooX/Role/Parameterized/With.pm
 LICENSE
 Makefile.PL
@@ -24,6 +23,8 @@ t/11_nested_roles.t
 t/99-pod.t
 t/99_bug_apply_same_role_two_different_classes.t
 t/99_bug_role_apply_twice.t
+t/99_bug_role_with_param_without_role_block_throw_error.t
+t/99_bug_two_roles_with_parameter.t
 t/lib/Bar.pm
 t/lib/BarWithRequires.pm
 t/lib/CompleteExample.pm
