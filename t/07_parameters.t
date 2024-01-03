@@ -43,6 +43,24 @@ use Test::More;
 
 }
 
+    {
+
+        package Some::Parametric::Role::With::Default::Parameters;
+        use Moo::Role;
+        use MooX::Role::Parameterized;
+
+        parameter foo => ( is => 'ro', default => sub {"bar"} );
+
+        role {
+            my ( $params, $mop ) = @_;
+
+            my $foo = $params->foo;
+
+            $mop->has( $foo => ( is => 'rw', required => 1 ) );
+        };
+        1;
+    }
+    
 {
 
     package MyGame::Weapon;
@@ -117,6 +135,29 @@ subtest "check mandatory parameter" => sub {
     }
     qr/unable to apply parameterized role 'Counter' to 'MyGame::Sword': Missing required arguments: name/,
       "must die if add Counter Parameterized role without mandatory parameter 'name'";
+
+    done_testing;
 };
+
+subtest "add parametric role without arguments with default parameters" =>
+  sub {
+    {
+
+        package Some::Class::For::Tests;
+
+        use Moo;
+        use MooX::Role::Parameterized::With;
+
+        with 'Some::Parametric::Role::With::Default::Parameters';
+
+        1;
+    }
+
+    my $object = Some::Class::For::Tests->new( bar => 1 );
+
+    isa_ok $object, 'Some::Class::For::Tests';
+
+    done_testing;
+  };
 
 done_testing;
