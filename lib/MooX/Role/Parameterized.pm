@@ -148,7 +148,8 @@ sub _create_parameters_klass {
     return $klass if $klass->isa("Moo::Object");
 
     {
-        Moo->_install_subs($klass);    ##no critic(Subroutines::ProtectPrivateSub)
+        Moo::_Utils::_set_loaded($klass);    ##no critic (Subroutines::ProtectPrivateSubs)
+        Moo->_install_subs($klass);          ##no critic(Subroutines::ProtectPrivateSub)
         Moo->make_class($klass);
     }
 
