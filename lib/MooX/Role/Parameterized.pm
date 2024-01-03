@@ -98,9 +98,17 @@ sub build_apply_roles_to_package {
             eval { use_module($role) };
 
             if ( MooX::Role::Parameterized->is_role($role) ) {
-                my $params = ( @_ && ref $_[0] eq 'HASH' ) ? shift : {};
+                my $params = [{}];
 
-                $role->apply_roles_to_target( $params, target => $target );
+                if ( @_ && ref $_[0]) {
+                    $params = shift;
+
+                    $params = [$params] if ref($params) ne ref( [] );
+                }
+
+                foreach my $args ( @{$params}){
+                    $role->apply_roles_to_target( $args, target => $target );
+                }
 
                 next;
             }
@@ -289,6 +297,25 @@ Default is false.
 =head1 MooX::Role::Parameterized::With
 
 See L<MooX::Role::Parameterized::With> package to easily load and apply roles.
+
+Allow to do this:
+
+    package FooWith;
+
+    use Moo;
+    use MooX::Role::Parameterized::With; # overrides Moo::with
+
+    with "Bar" => {           # apply parameterized role Bar once
+        attr => 'baz',
+        method => 'run'
+    }, "Other::Role" => [     # apply parameterized role "Other::Role" twice
+        { ... },              # with different parameters
+        { ... },
+      ],
+      "Some::Moo::Role",
+      "Some::Role::Tiny";
+
+    has foo => ( is => 'ro'); # continue with normal Moo code
 
 =head1 SEE ALSO
 
