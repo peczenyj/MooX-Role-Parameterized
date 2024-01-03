@@ -8,8 +8,8 @@ use warnings;
 use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
 use Exporter        qw(import);
-use Moo::Role 2;
-
+use Moo::Role       qw();
+use MooX::BuildClass;
 use MooX::Role::Parameterized::Mop;
 
 our $VERSION = "0.500";
@@ -139,8 +139,6 @@ sub build_apply_roles_to_package {
         }
     };
 }
-
-use MooX::BuildClass;
 
 sub _create_parameters_klass {
     my ( $package, $parameters_definition ) = @_;
