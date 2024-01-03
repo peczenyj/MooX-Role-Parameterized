@@ -35,7 +35,7 @@ sub apply_roles_to_target {
 
     $args = [$args] if ref($args) ne ref( [] );
 
-    my $target = defined( $extra{target} ) ? $extra{target} : caller;
+    my $target = defined( $extra{target} ) ? $extra{target} : (caller)[0];
 
     my $mop = MooX::Role::Parameterized::Mop->new(
         target => $target,
