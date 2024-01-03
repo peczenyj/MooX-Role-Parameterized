@@ -47,17 +47,8 @@ sub apply_roles_to_target {
             role   => $role
         );
 
-        if ( exists $INFO{$role}{parameters_definition} ) {
-            my $parameters_definition = $INFO{$role}{parameters_definition};
-
-            $INFO{$role}{parameter_definition_klass} =
-              _create_parameters_klass( $role, $parameters_definition );
-
-            delete $INFO{$role}{parameters_definition};
-        }
-
         my $parameter_definition_klass =
-          $INFO{$role}{parameter_definition_klass};
+          _fetch_parameter_definition_klass($role);
 
         foreach my $params ( @{$args} ) {
             if ( defined $parameter_definition_klass ) {
@@ -138,6 +129,26 @@ sub build_apply_roles_to_package {
               . "MooX::Role::Parameterized, Moo::Role or Role::Tiny role";
         }
     };
+}
+
+
+sub _fetch_parameter_definition_klass {
+    my $role = shift;
+
+    return if !exists $INFO{$role};
+
+    if ( !exists $INFO{$role}{parameter_definition_klass} ) {
+        return if !exists $INFO{$role}{parameters_definition};
+
+        my $parameters_definition = $INFO{$role}{parameters_definition};
+
+        $INFO{$role}{parameter_definition_klass} =
+          _create_parameters_klass( $role, $parameters_definition );
+
+        delete $INFO{$role}{parameters_definition};
+    }
+
+    return $INFO{$role}{parameter_definition_klass};
 }
 
 sub _create_parameters_klass {
