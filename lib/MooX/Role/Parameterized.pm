@@ -103,15 +103,15 @@ sub build_apply_roles_to_package {
             eval { use_module($role) };
 
             if ( MooX::Role::Parameterized->is_role($role) ) {
-                my $params = [{}];
+                my $params = [ {} ];
 
-                if ( @_ && ref $_[0]) {
+                if ( @_ && ref $_[0] ) {
                     $params = shift;
 
                     $params = [$params] if ref($params) ne ref( [] );
                 }
 
-                foreach my $args ( @{$params}){
+                foreach my $args ( @{$params} ) {
                     $role->apply_roles_to_target( $args, target => $target );
                 }
 
