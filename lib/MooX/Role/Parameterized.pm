@@ -47,21 +47,21 @@ sub apply_roles_to_target {
             role   => $role
         );
 
-        if (exists $INFO{$role}{parameters_definition}) {
+        if ( exists $INFO{$role}{parameters_definition} ) {
             my $parameters_definition = $INFO{$role}{parameters_definition};
 
-            $INFO{$role}{parameter_definition_klass} = _create_parameters_klass($role, $parameters_definition);
+            $INFO{$role}{parameter_definition_klass} =
+              _create_parameters_klass( $role, $parameters_definition );
 
             delete $INFO{$role}{parameters_definition};
         }
 
-        my $parameter_definition_klass = $INFO{$role}{parameter_definition_klass};
+        my $parameter_definition_klass =
+          $INFO{$role}{parameter_definition_klass};
 
         foreach my $params ( @{$args} ) {
-            if (defined $parameter_definition_klass) {
-                eval { 
-                    $params = $parameter_definition_klass->new($params);
-                };
+            if ( defined $parameter_definition_klass ) {
+                eval { $params = $parameter_definition_klass->new($params); };
 
                 croak(
                     "unable to apply parameterized role '${role}' to '${target}': $@"
@@ -91,7 +91,7 @@ sub parameter {
 
     $INFO{$package} ||= { is_role => 1 };
 
-    push @{$INFO{$package}{parameters_definition} ||= []}, \@_;
+    push @{ $INFO{$package}{parameters_definition} ||= [] }, \@_;
 }
 
 sub is_role {
@@ -145,17 +145,16 @@ sub _create_parameters_klass {
 
     my $klass = "${package}::__MOOX_ROLE_PARAMETERIZED_PARAMS__";
 
-    eval <<"END_OF_CLASS";    ##no critic(BuiltinFunctions::ProhibitStringyEval)
-package $klass;
+    return $klass if $klass->isa("Moo::Object");
 
-use Moo;
-
-END_OF_CLASS
-
-    Carp::croak($@) if $@;
+    {
+        Moo->_install_subs($klass);    ##no critic(Subroutines::ProtectPrivateSub)
+        Moo->make_class($klass);
+    }
 
     require MooX::Role::Parameterized::Params;
-    MooX::Role::Parameterized::Params->apply_roles_to_target({ parameters_definition => $args }, target => $klass);
+    MooX::Role::Parameterized::Params->apply_roles_to_target(
+        { parameters_definition => $args }, target => $klass );
 
     return $klass;
 }

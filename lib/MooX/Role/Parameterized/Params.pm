@@ -11,12 +11,12 @@ use MooX::Role::Parameterized;
 our $VERSION = "0.5O0";
 
 role {
-    my ($params, $mop) = @_;
+    my ( $params, $mop ) = @_;
 
     my $parameters_definition = $params->{parameters_definition} || [];
 
-    foreach my $parameter_definition ( @{$parameters_definition}) {
-        $mop->has(@{$parameter_definition});
+    foreach my $parameter_definition ( @{$parameters_definition} ) {
+        $mop->has( @{$parameter_definition} );
     }
 };
 
