@@ -10,7 +10,7 @@ How to contribute to C<MooX-Role-Parameterized>?
 Patches are welcome!
 
 They must be built against the
-C<L<main|https://github.com/peczenyj/MooX-Role-Parameterized/tree/master>> branch,
+C<L<devel|https://github.com/peczenyj/MooX-Role-Parameterized/tree/devel>> branch,
 then submitted as pull requests at GitHub.
 
 The documentation is written using the
