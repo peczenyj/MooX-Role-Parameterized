@@ -1,0 +1,49 @@
+---
+name: linux
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        perl: ["5.12.2"]
+        include:
+          - perl: 'latest'
+            coverage: true
+    name: Perl ${{ matrix.perl }} on ubuntu
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+      - run: perl -V
+      - run: cpanm -v
+      - run: cpanm File::ShareDir::Install Test::CPAN::Meta::JSON Test::CPAN::Meta Test::Pod Test::Version
+      - name: Install Author Test Dependencies
+        if: ${{ matrix.coverage }}
+        run: cpanm -n Test::Perl::Critic Test::PerlTidy
+      - run: cpanm --installdeps .
+      - name: Run Tests
+        run: prove -lr t
+      - name: Run Author Tests
+        if: ${{ matrix.coverage }}
+        run: prove -lr xt
+      - name: Run tests (with tap formatter github actions)
+        if: ${{ matrix.coverage }}
+        run: |
+          cpanm -n TAP::Formatter::GitHubActions
+          prove --merge --formatter TAP::Formatter::GitHubActions -l t
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
+        env:
+          GITHUB_ACTIONS: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          cpanm -n Devel::Cover::Report::Coveralls
+          cover -test -report Coveralls
