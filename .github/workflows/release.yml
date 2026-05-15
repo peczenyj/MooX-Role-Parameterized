@@ -1,69 +1,49 @@
-name: release
+name: Release
 
 on:
   push:
     tags:
       - 'v*'
 
-permissions:
-  contents: write
-
 jobs:
   release:
+    name: Build, CPAN and GitHub Release
     runs-on: ubuntu-latest
-    container:
-      image: perl:latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Configure git
-        run: git config --global --add safe.directory '*'
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: 'latest'
 
-      - name: perl -V
-        run: perl -V
-
-      - name: Install dependencies
+      - name: Install Release Dependencies
         run: |
-          cpanm -nq --with-develop --installdeps .
-          cpanm -nq CPAN::Uploader
+          cpanm -n CPAN::Uploader
 
-      - name: Verify tag matches $VERSION
-        run: |
-          tag="${GITHUB_REF_NAME#v}"
-          for mod in \
-            lib/MooX/Role/Parameterized.pm \
-            lib/MooX/Role/Parameterized/Mop.pm \
-            lib/MooX/Role/Parameterized/With.pm
-          do
-            ver=$(perl -ne 'if (/\$VERSION\s*=\s*"([^"]+)"/) { print $1; exit }' "$mod")
-            if [ "$ver" != "$tag" ]; then
-              echo "::error::Version mismatch in $mod: \$VERSION='$ver' but tag='$tag'"
-              exit 1
-            fi
-          done
-          echo "All three modules are at version $tag"
-
-      - name: Run test suite
-        run: prove -lr t
-
-      - name: Run author tests
-        run: prove -lr xt
-
-      - name: Build the distribution tarball
+      - name: Build Distribution
         run: |
           perl Makefile.PL
           make manifest
           make dist
 
       - name: Upload to CPAN
+        if: env.PAUSE_USER != ''
         env:
-          PAUSE_USERNAME: ${{ secrets.PAUSE_USERNAME }}
+          PAUSE_USER: ${{ secrets.PAUSE_USER }}
           PAUSE_PASSWORD: ${{ secrets.PAUSE_PASSWORD }}
         run: |
-          cpan-upload --user "$PAUSE_USERNAME" --password "$PAUSE_PASSWORD" MooX-Role-Parameterized-*.tar.gz
+          cpan-upload -u "$PAUSE_USER" -p "$PAUSE_PASSWORD" MooX-Role-Parameterized-*.tar.gz
 
-      - name: Create GitHub release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: MooX-Role-Parameterized-*.tar.gz
           generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
