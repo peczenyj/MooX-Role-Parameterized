@@ -1,5 +1,6 @@
 package MooX::Role::Parameterized::Mop;
 
+use v5.12;
 use strict;
 use warnings;
 use Carp         qw(croak);

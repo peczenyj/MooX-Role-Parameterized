@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+use v5.12;
 use warnings;
 use strict;
 use feature qw{ say };

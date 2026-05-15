@@ -1,5 +1,6 @@
 package MooX::Role::Parameterized::With;
 
+use v5.12;
 use strict;
 use warnings;
 
