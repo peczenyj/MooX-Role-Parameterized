@@ -1,3 +1,9 @@
+0.502   ven. mai 15 2026 16:16:22 CEST
+  - fix $VERSION typo in MooX::Role::Parameterized::Mop
+  - add automated CPAN + GitHub release workflow triggered on v* tags
+  - add xt/ author tests for perlcritic and perltidy
+  - track AGENTS.md repository guidance in the distribution
+
 0.501   Wed Jan 03 2024 18:12:22 CET
   - must support arrayref while set parameterized roles, instead repeat the same role name twice
   - fix bug creating a parameterized role with parameter but no role block throw exception
