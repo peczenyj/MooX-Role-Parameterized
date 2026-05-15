@@ -27,6 +27,18 @@ WriteMakefile(
         ? ( META_MERGE => {
                 'meta-spec'    => { version => 2 },
                 dynamic_config => 0,
+                prereqs        => {
+                    develop => {
+                        requires => {
+                            'Test::Perl::Critic' => 0,
+                            'Test::PerlTidy'     => 0,
+                            'Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText'
+                              => 0,
+                            'Perl::Critic::Policy::Miscellanea::RequireRcsKeywords'
+                              => 0,
+                        },
+                    },
+                },
                 resources      => {
                     homepage =>
                       'https://github.com/peczenyj/MooX-Role-Parameterized',
