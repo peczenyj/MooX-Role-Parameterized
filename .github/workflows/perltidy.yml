@@ -16,11 +16,6 @@ jobs:
       - name: perl -V
         run: perl -V
       - name: Install dependencies
-        run: cpanm -n Perl::Tidy
-      - name: perltidy --version
-        run: perltidy --version
-      - name: Run perltidy
-        shell: bash
-        run: |
-          shopt -s extglob globstar nullglob
-          perltidy --pro=.../.perltidyrc -b -bext='/' **/*.p[lm] **/*.t && git diff --exit-code
+        run: cpanm -nq --with-develop --installdeps .
+      - name: Run perltidy author test
+        run: prove -lv xt/author/perltidy.t
