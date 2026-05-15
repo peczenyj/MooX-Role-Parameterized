@@ -1,4 +1,4 @@
-package MooX::Role::Parameterized;
+package MooX::Role::Parameterized 0.600;
 
 use v5.12;
 use strict;
@@ -12,8 +12,6 @@ use Exporter        qw(import);
 use Moo::Role       qw();
 use MooX::BuildClass;
 use MooX::Role::Parameterized::Mop;
-
-our $VERSION = "0.600";
 
 our @EXPORT = qw(parameter role apply apply_roles_to_target);
 

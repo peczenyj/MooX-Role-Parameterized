@@ -1,12 +1,10 @@
-package MooX::Role::Parameterized::Mop;
+package MooX::Role::Parameterized::Mop 0.600;
 
 use v5.12;
 use strict;
 use warnings;
 use Carp         qw(croak);
 use Scalar::Util qw(blessed);
-
-our $VERSION = "0.600";
 
 # ABSTRACT: small proxy to offer mop methods like has, with, requires, etc.
 
