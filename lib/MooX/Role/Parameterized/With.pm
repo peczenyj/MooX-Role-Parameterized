@@ -4,7 +4,7 @@ use v5.12;
 use strict;
 use warnings;
 
-our $VERSION = "0.502";
+our $VERSION = "0.600";
 
 # ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
