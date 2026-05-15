@@ -47,7 +47,7 @@ jobs:
         run: prove -lr t
 
       - name: Run author tests
-        run: prove -l xt
+        run: prove -lr xt
 
       - name: Build the distribution tarball
         run: |
