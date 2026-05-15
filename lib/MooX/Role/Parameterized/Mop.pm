@@ -5,7 +5,7 @@ use warnings;
 use Carp         qw(croak);
 use Scalar::Util qw(blessed);
 
-our $VERSION = "0.5O1";
+our $VERSION = "0.502";
 
 # ABSTRACT: small proxy to offer mop methods like has, with, requires, etc.
 

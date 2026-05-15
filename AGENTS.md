@@ -33,14 +33,15 @@ cpanm -n Devel::Cover Devel::Cover::Report::Coveralls
 cover -test -report Coveralls
 ```
 
-Lint / format (must pass cleanly — both are enforced by GitHub Actions):
+Lint / format — these run as author tests under `xt/`, enforced by GitHub Actions:
 
 ```
-perlcritic lib
-perltidy --pro=.../.perltidyrc -b -bext='/' **/*.p[lm] **/*.t
+prove -l xt/author/perlcritic.t   # Perl::Critic over lib/
+prove -l xt/author/perltidy.t     # perltidy formatting check
+prove -lr xt                      # both at once
 ```
 
-`perltidy` runs with `-b` (in-place edit), so commit any resulting changes. The CI job ends with `git diff --exit-code`, meaning unformatted code fails the build.
+`xt/` author tests are not run by `make test`. Install their dependencies with `cpanm --with-develop --installdeps .`.
 
 Install dev dependencies:
 
@@ -74,10 +75,12 @@ Three modules implement the system; understanding how they cooperate is the bulk
 
 ## Releasing
 
-Per `CONTRIBUTING.pod`, version bumps must be applied to **all three** module files:
+Releases are automated by `.github/workflows/release.yml`, triggered by pushing a `v*` tag. The workflow checks that the tag matches `$VERSION` in all three modules, runs the test and author-test suites, builds the tarball, uploads it to CPAN, and publishes a GitHub release.
+
+To cut a release: bump `$VERSION` in **all three** module files, add a `Changelog` entry, commit, then `git tag vX.YYY && git push origin vX.YYY`.
 
 - `lib/MooX/Role/Parameterized.pm`
 - `lib/MooX/Role/Parameterized/Mop.pm`
 - `lib/MooX/Role/Parameterized/With.pm`
 
-…plus `Changelog`, then `make manifest && make dist`.
+The `PAUSE_USERNAME` and `PAUSE_PASSWORD` repository secrets must be configured for the CPAN upload step.
