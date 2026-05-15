@@ -1,4 +1,4 @@
-0.502   ven. mai 15 2026 16:16:22 CEST
+0.502   Fri May 15 2026 16:16:22 CEST
   - fix $VERSION typo in MooX::Role::Parameterized::Mop
   - add automated CPAN + GitHub release workflow triggered on v* tags
   - add xt/ author tests for perlcritic and perltidy
