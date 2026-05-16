@@ -235,7 +235,7 @@ MooX::Role::Parameterized - roles with composition parameters
 
 =head1 DESCRIPTION
 
-It is an B<experimental> port of L<MooseX::Role::Parameterized> to L<Moo>.
+It is a port of L<MooseX::Role::Parameterized> to L<Moo>.
 
 =head1 FUNCTIONS
 
@@ -298,7 +298,7 @@ Important, if you want to apply the role multiple times, like to create multiple
 
     has foo => ( is => 'ro'); # continue with normal Moo code
 
-=head1 STATIC METHOS
+=head1 STATIC METHODS
 
 =head2 is_role
 

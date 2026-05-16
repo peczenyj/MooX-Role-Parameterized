@@ -4,7 +4,7 @@ This file provides guidance to agentic coding tools when working with code in th
 
 ## Project
 
-`MooX::Role::Parameterized` is a CPAN distribution: an experimental port of `MooseX::Role::Parameterized` to `Moo`. It lets a Moo role accept composition-time parameters that customize what gets injected into the consumer (attributes, methods, modifiers).
+`MooX::Role::Parameterized` is a CPAN distribution: a port of `MooseX::Role::Parameterized` to `Moo`. It lets a Moo role accept composition-time parameters that customize what gets injected into the consumer (attributes, methods, modifiers).
 
 Minimum Perl is 5.12 (CI matrix runs Perl 5.12 and the latest stable). Patches must be submitted against the `devel` branch.
 

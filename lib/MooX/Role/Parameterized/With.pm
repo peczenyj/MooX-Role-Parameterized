@@ -55,7 +55,7 @@ MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
 
 =head1 DESCRIPTION
 
-This B<experimental> package try to offer an easy way to add parametrized roles.
+This package tries to offer an easy way to add parameterized roles.
 
 Will load and apply L<MooX::Roles::Parameterized> roles, just need use this package
 with a hash of role => parameters.
