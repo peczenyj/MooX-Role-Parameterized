@@ -6,6 +6,8 @@ next    (unreleased)
   - bound the arithmetic-stream example so it terminates
   - add xt/examples.t to run the example scripts
   - add xt/version.t to check $VERSION coherence across the modules
+  - add xt/synopsis.t to check the SYNOPSIS code compiles
+  - rewrite the MooX::Role::Parameterized::With SYNOPSIS as a runnable example
 
 0.600   Fri May 16 2026 08:39:52 CEST
   - fix issue #22 (CONTRIBUTING.pod gets installed as MooX::Role::CONTRIBUTING)

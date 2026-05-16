@@ -42,6 +42,7 @@ prove -l xt/perlcritic.t   # Perl::Critic over lib/
 prove -l xt/perltidy.t     # perltidy formatting check
 prove -l xt/examples.t     # run every examples/*.pl script
 prove -l xt/version.t      # $VERSION coherence across modules
+prove -l xt/synopsis.t     # SYNOPSIS code compiles
 prove -lr xt               # all of them at once
 ```
 
