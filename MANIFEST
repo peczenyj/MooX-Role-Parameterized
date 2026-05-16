@@ -2,6 +2,8 @@ AGENTS.md
 Changelog
 CODE_OF_CONDUCT.md
 CONTRIBUTING
+examples/applying-roles.pl
+examples/basics.pl
 examples/moosex-role-parameterized.pl
 examples/parameters.pl
 examples/task-1-weekly-challenge-122.pl
