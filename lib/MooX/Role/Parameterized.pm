@@ -1,4 +1,5 @@
-package MooX::Role::Parameterized 0.601;
+package MooX::Role::Parameterized;
+# VERSION
 
 use v5.12;
 use strict;
