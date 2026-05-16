@@ -352,6 +352,8 @@ Allow to do this:
 
 L<MooseX::Role::Parameterized> - Moose version
 
+L<MooX::Role::Parameterized::Cookbook> - recipes and worked examples
+
 =head1 THANKS
 
 =over

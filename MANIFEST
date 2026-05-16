@@ -6,6 +6,7 @@ examples/moosex-role-parameterized.pl
 examples/parameters.pl
 examples/task-1-weekly-challenge-122.pl
 lib/MooX/Role/Parameterized.pm
+lib/MooX/Role/Parameterized/Cookbook.pm
 lib/MooX/Role/Parameterized/Mop.pm
 lib/MooX/Role/Parameterized/With.pm
 LICENSE

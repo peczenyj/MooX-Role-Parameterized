@@ -8,6 +8,7 @@ use ExtUtils::MakeMaker;
 my %provides;
 for my $file (
     'lib/MooX/Role/Parameterized.pm',
+    'lib/MooX/Role/Parameterized/Cookbook.pm',
     'lib/MooX/Role/Parameterized/Mop.pm',
     'lib/MooX/Role/Parameterized/With.pm',
 ) {
