@@ -1,8 +1,9 @@
-package MooX::Role::Parameterized::Mop 0.601;
-
+package MooX::Role::Parameterized::Mop;
 use v5.12;
 use strict;
 use warnings;
+
+# VERSION
 use Carp         qw(croak);
 use Scalar::Util qw(blessed);
 

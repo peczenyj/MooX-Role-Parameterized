@@ -10,11 +10,11 @@ MooX::Role::Parameterized - roles with composition parameters
 [![license](https://img.shields.io/cpan/l/MooX-Role-Parameterized.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/blob/master/LICENSE)
 [![cpan](https://img.shields.io/cpan/v/MooX-Role-Parameterized.svg)](https://metacpan.org/dist/MooX-Role-Parameterized)
 
-## SYNOPSIS
+# SYNOPSIS
 
     package Counter;
     use Moo::Role;
-    use MooX::Role::Parameterized;
+    use MooX::Role::Parameterized;    
     use Types::Standard qw( Str );
 
     parameter name => (
@@ -49,7 +49,7 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
     
     with Counter => {          # injects 'enchantment' attribute and
-        name => 'enchantment', # methods increment_enchantment (+1)
+        name => 'enchantment', # methods increment_enchantment ( +1 )
     };                         # reset_enchantment (set to zero)
     
     package MyGame::Wand;
@@ -57,49 +57,49 @@ MooX::Role::Parameterized - roles with composition parameters
     use MooX::Role::Parameterized::With;
 
     with Counter => {         # injects 'zapped' attribute and
-        name => 'zapped',     # methods increment_zapped (+1)
-    };                        # reset_zapped (set to zerà)
+        name => 'zapped',     # methods increment_zapped ( +1 )
+    };                        # reset_zapped (set to zero)
 
-## DESCRIPTION
+# DESCRIPTION
 
-It is a port of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) to [Moo](https://metacpan.org/pod/Moo).
+It is a port of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX%3A%3ARole%3A%3AParameterized) to [Moo](https://metacpan.org/pod/Moo).
 
-## FUNCTIONS
+# FUNCTIONS
 
 This package exports the following subroutines: `parameter`, `role`, `apply_roles_to_target` and `apply`.
 
-### parameter
+## parameter
 
 This function receive the same parameter as `Moo::has`. If present, the parameter hash reference will be blessed as a Moo class. This is useful to add default values or set some parameters as required.
 
-### role
+## role
 
-This function accepts just **one** code block. Will execute this code then we apply the Role in the
-target class and will receive the parameter hash reference + one **mop** object.
+This function accepts just **one** code block. Will execute this code then we apply the Role in the 
+target classand will receive the parameter hash reference + one **mop** object.
 
 The **params** reference will be blessed if there is some parameter defined on this role.
 
-The **mop** object is a proxy to the target class.
+The **mop** object is a proxy to the target class. 
 
-It offer a better way to call `has`, `after`, `before`, `around`, `with` and `requires` without side effects.
+It offer a better way to call `has`, `after`, `before`, `around`, `with` and `requires` without side effects. 
 
-Use `method` to inject a new method and `meta` to access `TARGET_PACKAGE->meta`
+Use `method` to inject a new method and `meta` to access TARGET\_PACKAGE->meta
 
 Please use:
 
-    my ($p, $mop) = @_;
+    my ($params, $mop) = @_;
     ...
-    $mop->has($p->{attribute} =>(...));
+    $mop->has($params->{attribute} =>(...));
 
     $mop->method(name => sub { ... });
 
     $mop->meta->make_immutable;
 
-### apply
+## apply
 
-Alias to `apply_roles_to_target`.
+Alias to `apply_roles_to_target`
 
-### apply_roles_to_target
+## apply\_roles\_to\_target
 
 When called, will apply the `/role` on the current package. The behavior depends of the parameter list.
 
@@ -107,56 +107,54 @@ This will install the role in the target package. Does not need call `with`.
 
 Important, if you want to apply the role multiple times, like to create multiple attributes, please pass an **arrayref**.
 
-    package My::Role;
-
-    use Moo::Role;
-    use MooX::Role::Parameterized;
-
-    role {
-        my ($params, $mop) = @_;
-
-        $mop->has( $params->{attr} => ( is => 'rw' ));
-
-        $mop->method($params->{method} => sub {
-            1024;
-        });
-    };
-
-    package My::Class;
+    package FooWith;
 
     use Moo;
-    use My::Role;
+    use MooX::Role::Parameterized::With; # overrides Moo::with
 
-    My::Role->apply_roles_to_target([{ # original way of add this role
-        attr   => 'baz',               # add attribute read-write called 'baz' 
-        method => 'run'                # add method called 'run' and return 1024 
-    }
-     ,                                 # and if the apply receives one arrayref
-    {   attr   => 'bam',               # will call the role block multiple times.
-        method => 'jump'               # PLEASE CALL apply once
-    }]);
+    with "Bar" => {           # apply parameterized role Bar once
+        attr => 'baz',
+        method => 'run'
+    }, "Other::Role" => [     # apply parameterized role "Other::Role" twice
+        { ... },              # with different parameters
+        { ... },
+    ],
+    "Other::Role" => { ...},  # apply it again
+    "Some::Moo::Role",
+    "Some::Role::Tiny";
+
+    has foo => ( is => 'ro'); # continue with normal Moo code
+
+# STATIC METHODS
+
+## is\_role
+
+Returns true if the package is a [MooX::Role::Parameterized](https://metacpan.org/pod/MooX%3A%3ARole%3A%3AParameterized).
+
+    MooX::Role::Parameterized->is_role("My::Role");
+
+# DEPRECATED FUNCTIONS
+
+## hasp
+
+Removed
+
+## method
+
+Removed
+
+# VARIABLES
 
 ## MooX::Role::Parameterized::VERBOSE
 
-By setting `$MooX::Role::Parameterized::VERBOSE` with some true value we will carp on certain conditions
+By setting `$MooX::Role::Parameterized::VERBOSE` with some true value we will carp on certain conditions 
 (method override, unable to load package, etc).
 
 Default is false.
 
-## DEPRECATED FUNCTIONS
+# MooX::Role::Parameterized::With
 
-### hasp
-
-Deleted
-
-### method
-
-Deleted
-
-## MooX::Role::Parameterized::With
-
-See [MooX::Role::Parameterized::With](https://metacpan.org/pod/MooX::Role::Parameterized::With) package to easily load and apply roles.
-
+See [MooX::Role::Parameterized::With](https://metacpan.org/pod/MooX%3A%3ARole%3A%3AParameterized%3A%3AWith) package to easily load and apply roles.
 
 Allow to do this:
 
@@ -171,24 +169,26 @@ Allow to do this:
     }, "Other::Role" => [     # apply parameterized role "Other::Role" twice
         { ... },              # with different parameters
         { ... },
-        ],
-        "Some::Moo::Role",
-        "Some::Role::Tiny";
+      ],
+      "Some::Moo::Role",
+      "Some::Role::Tiny";
 
     has foo => ( is => 'ro'); # continue with normal Moo code
 
-## SEE ALSO
+# SEE ALSO
 
-[MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) - Moose version
+[MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX%3A%3ARole%3A%3AParameterized) - Moose version
 
-## THANKS
+[MooX::Role::Parameterized::Cookbook](https://metacpan.org/pod/MooX%3A%3ARole%3A%3AParameterized%3A%3ACookbook) - recipes and worked examples
 
-* FGA <fabrice.gabolde@gmail.com>
-* PERLANCAR <perlancar@gmail.com>
-* CHOROBA <choroba@cpan.org>
-* Ed J <mohawk2@users.noreply.github.com>
+# THANKS
 
-## LICENSE
+- FGA <fabrice.gabolde@gmail.com>
+- PERLANCAR <perlancar@gmail.com>
+- CHOROBA <choroba@cpan.org>
+- Ed J <mohawk2@users.noreply.github.com>
+
+# LICENSE
 
 The MIT License
 
@@ -217,10 +217,10 @@ The MIT License
       CONNECTION WITH THE SOFTWARE OR THE USE OR
       OTHER DEALINGS IN THE SOFTWARE.
 
-## AUTHOR
+# AUTHOR
 
-Tiago Peczenyj <tiago (dot) peczenyj (at) gmail (dot) com>
+Tiago Peczenyj &lt;tiago (dot) peczenyj (at) gmail (dot) com>
 
-## BUGS
+# BUGS
 
 Please report any bugs or feature requests on the bugtracker website
