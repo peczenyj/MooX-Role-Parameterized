@@ -8,6 +8,8 @@ This file provides guidance to agentic coding tools when working with code in th
 
 Minimum Perl is 5.12 (CI matrix runs Perl 5.12 and the latest stable). Patches must be submitted against the `devel` branch.
 
+Security vulnerabilities should be reported privately as described in `SECURITY.md`, not through public issues.
+
 ## Common commands
 
 Build / test (ExtUtils::MakeMaker):
@@ -33,12 +35,13 @@ cpanm -n Devel::Cover Devel::Cover::Report::Coveralls
 cover -test -report Coveralls
 ```
 
-Lint / format — these run as author tests under `xt/`, enforced by GitHub Actions:
+Author tests under `xt/` — perlcritic and perltidy are enforced by GitHub Actions:
 
 ```
 prove -l xt/author/perlcritic.t   # Perl::Critic over lib/
 prove -l xt/author/perltidy.t     # perltidy formatting check
-prove -lr xt                      # both at once
+prove -l xt/author/examples.t     # run every examples/*.pl script
+prove -lr xt                      # all of them at once
 ```
 
 `xt/` author tests are not run by `make test`. Install their dependencies with `cpanm --with-develop --installdeps .`.
@@ -72,6 +75,9 @@ Three modules implement the system; understanding how they cooperate is the bulk
 
 ### `$VERBOSE` flag
 `$MooX::Role::Parameterized::VERBOSE` (default false) controls non-fatal warnings (method override, `apply` deprecation carp, redefining `with`). Tests rely on the silent default — flipping it on may add unexpected output.
+
+### `lib/MooX/Role/Parameterized/Cookbook.pm` — documentation only
+POD-only module: five recipes with worked examples, no functional code (just the `package`/`use`/`1;` boilerplate before `__END__`). Each recipe is backed by a script in `examples/`, and `xt/author/examples.t` runs them all.
 
 ## Releasing
 
