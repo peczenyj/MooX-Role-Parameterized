@@ -161,6 +161,11 @@ Two scripts are added so all five recipes have a backing script:
 - `examples/applying-roles.pl` for recipe 3 (`MooX::Role::Parameterized::With`,
   including multiple/arrayref parameter sets).
 
+`examples/task-1-weekly-challenge-122.pl` currently ends in an unbounded
+`while (1) { ...; sleep 1 }` loop, so it would never return. It is modified to
+stop after a fixed number of iterations and to drop the `sleep`, so the author
+test can run it to completion while it remains a valid demonstration.
+
 Both new scripts follow the existing `examples/` conventions, including the
 `use v5.12;` declaration established in Phase 2, and are added to `MANIFEST`.
 
@@ -191,6 +196,8 @@ reader can run the full program.
 - `AGENTS.md` — reword the experimental sentence; note `SECURITY.md` and the
   cookbook where the document describes project layout/posture.
 - `Makefile.PL` — add `Cookbook.pm` to the `%provides` file list.
+- `examples/task-1-weekly-challenge-122.pl` — bound the `while (1)` loop and
+  drop the `sleep` so the author test can run it to completion.
 - `MANIFEST` — gains `SECURITY.md`, `Cookbook.pm`, and the two new
   `examples/` scripts (`make manifest` regenerates it).
 - `Changelog` — an entry recording the Phase 1 documentation changes.
