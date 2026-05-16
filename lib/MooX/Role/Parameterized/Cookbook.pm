@@ -24,7 +24,7 @@ L<MooseX::Role::Parameterized>.
 
 Each recipe is backed by a runnable script in the distribution's F<examples/>
 directory, named at the end of the recipe. The author test
-F<xt/author/examples.t> runs every one of those scripts, so the code shown here
+F<xt/examples.t> runs every one of those scripts, so the code shown here
 is kept honest against working programs.
 
 If you have never used a parameterized role before, read the recipes in order.

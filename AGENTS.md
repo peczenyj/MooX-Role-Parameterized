@@ -35,13 +35,13 @@ cpanm -n Devel::Cover Devel::Cover::Report::Coveralls
 cover -test -report Coveralls
 ```
 
-Author tests under `xt/` — perlcritic and perltidy are enforced by GitHub Actions:
+Author tests under `xt/`, all run in CI on the latest-Perl job via `prove -lr xt`:
 
 ```
-prove -l xt/author/perlcritic.t   # Perl::Critic over lib/
-prove -l xt/author/perltidy.t     # perltidy formatting check
-prove -l xt/author/examples.t     # run every examples/*.pl script
-prove -lr xt                      # all of them at once
+prove -l xt/perlcritic.t   # Perl::Critic over lib/
+prove -l xt/perltidy.t     # perltidy formatting check
+prove -l xt/examples.t     # run every examples/*.pl script
+prove -lr xt               # all of them at once
 ```
 
 `xt/` author tests are not run by `make test`. Install their dependencies with `cpanm --with-develop --installdeps .`.
@@ -77,7 +77,7 @@ Three modules implement the system; understanding how they cooperate is the bulk
 `$MooX::Role::Parameterized::VERBOSE` (default false) controls non-fatal warnings (method override, `apply` deprecation carp, redefining `with`). Tests rely on the silent default — flipping it on may add unexpected output.
 
 ### `lib/MooX/Role/Parameterized/Cookbook.pm` — documentation only
-POD-only module: five recipes with worked examples, no functional code (just the `package`/`use`/`1;` boilerplate before `__END__`). Each recipe is backed by a script in `examples/`, and `xt/author/examples.t` runs them all.
+POD-only module: five recipes with worked examples, no functional code (just the `package`/`use`/`1;` boilerplate before `__END__`). Each recipe is backed by a script in `examples/`, and `xt/examples.t` runs them all.
 
 ## Releasing
 
