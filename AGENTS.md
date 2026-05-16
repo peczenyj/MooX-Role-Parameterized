@@ -41,6 +41,7 @@ Author tests under `xt/`, all run in CI on the latest-Perl job via `prove -lr xt
 prove -l xt/perlcritic.t   # Perl::Critic over lib/
 prove -l xt/perltidy.t     # perltidy formatting check
 prove -l xt/examples.t     # run every examples/*.pl script
+prove -l xt/version.t      # $VERSION coherence across modules
 prove -lr xt               # all of them at once
 ```
 

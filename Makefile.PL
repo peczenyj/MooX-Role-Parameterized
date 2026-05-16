@@ -51,6 +51,7 @@ WriteMakefile(
                         requires => {
                             'Test::Perl::Critic' => 0,
                             'Test::PerlTidy'     => 0,
+                            'Test::Version'      => 0,
                             'Type::Tiny'         => 0,
                             'Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText'
                               => 0,
