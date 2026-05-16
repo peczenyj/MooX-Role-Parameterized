@@ -62,7 +62,7 @@ MooX::Role::Parameterized - roles with composition parameters
 
 ## DESCRIPTION
 
-It is an **experimental** port of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) to [Moo](https://metacpan.org/pod/Moo).
+It is a port of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX::Role::Parameterized) to [Moo](https://metacpan.org/pod/Moo).
 
 ## FUNCTIONS
 

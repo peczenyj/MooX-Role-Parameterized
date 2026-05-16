@@ -4,9 +4,11 @@ This file provides guidance to agentic coding tools when working with code in th
 
 ## Project
 
-`MooX::Role::Parameterized` is a CPAN distribution: an experimental port of `MooseX::Role::Parameterized` to `Moo`. It lets a Moo role accept composition-time parameters that customize what gets injected into the consumer (attributes, methods, modifiers).
+`MooX::Role::Parameterized` is a CPAN distribution: a port of `MooseX::Role::Parameterized` to `Moo`. It lets a Moo role accept composition-time parameters that customize what gets injected into the consumer (attributes, methods, modifiers).
 
 Minimum Perl is 5.12 (CI matrix runs Perl 5.12 and the latest stable). Patches must be submitted against the `devel` branch.
+
+Security vulnerabilities should be reported privately as described in `SECURITY.md`, not through public issues.
 
 ## Common commands
 
@@ -33,12 +35,15 @@ cpanm -n Devel::Cover Devel::Cover::Report::Coveralls
 cover -test -report Coveralls
 ```
 
-Lint / format — these run as author tests under `xt/`, enforced by GitHub Actions:
+Author tests under `xt/`, all run in CI on the latest-Perl job via `prove -lr xt`:
 
 ```
-prove -l xt/author/perlcritic.t   # Perl::Critic over lib/
-prove -l xt/author/perltidy.t     # perltidy formatting check
-prove -lr xt                      # both at once
+prove -l xt/perlcritic.t   # Perl::Critic over lib/
+prove -l xt/perltidy.t     # perltidy formatting check
+prove -l xt/examples.t     # run every examples/*.pl script
+prove -l xt/version.t      # $VERSION coherence across modules
+prove -l xt/synopsis.t     # SYNOPSIS code compiles
+prove -lr xt               # all of them at once
 ```
 
 `xt/` author tests are not run by `make test`. Install their dependencies with `cpanm --with-develop --installdeps .`.
@@ -73,13 +78,17 @@ Three modules implement the system; understanding how they cooperate is the bulk
 ### `$VERBOSE` flag
 `$MooX::Role::Parameterized::VERBOSE` (default false) controls non-fatal warnings (method override, `apply` deprecation carp, redefining `with`). Tests rely on the silent default — flipping it on may add unexpected output.
 
+### `lib/MooX/Role/Parameterized/Cookbook.pm` — documentation only
+POD-only module: five recipes with worked examples, no functional code (just the `package`/`use`/`1;` boilerplate before `__END__`). Each recipe is backed by a script in `examples/`, and `xt/examples.t` runs them all.
+
 ## Releasing
 
-Releases are automated by `.github/workflows/release.yml`, triggered by pushing a `v*` tag. The workflow checks that the tag matches `$VERSION` in all three modules, runs the test and author-test suites, builds the tarball, uploads it to CPAN, and publishes a GitHub release.
+Releases are automated by `.github/workflows/release.yml`, triggered by pushing a `v*` tag. The workflow checks that the tag matches `$VERSION` in all four modules, runs the test and author-test suites, builds the tarball, uploads it to CPAN, and publishes a GitHub release.
 
-To cut a release: bump `$VERSION` in **all three** module files, add a `Changelog` entry, commit, then `git tag vX.YYY && git push origin vX.YYY`.
+To cut a release: bump `$VERSION` in **all four** module files, add a `Changelog` entry, commit, then `git tag vX.YYY && git push origin vX.YYY`.
 
 - `lib/MooX/Role/Parameterized.pm`
+- `lib/MooX/Role/Parameterized/Cookbook.pm`
 - `lib/MooX/Role/Parameterized/Mop.pm`
 - `lib/MooX/Role/Parameterized/With.pm`
 

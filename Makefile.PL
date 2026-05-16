@@ -8,6 +8,7 @@ use ExtUtils::MakeMaker;
 my %provides;
 for my $file (
     'lib/MooX/Role/Parameterized.pm',
+    'lib/MooX/Role/Parameterized/Cookbook.pm',
     'lib/MooX/Role/Parameterized/Mop.pm',
     'lib/MooX/Role/Parameterized/With.pm',
 ) {
@@ -50,6 +51,9 @@ WriteMakefile(
                         requires => {
                             'Test::Perl::Critic' => 0,
                             'Test::PerlTidy'     => 0,
+                            'Test::Synopsis'     => 0,
+                            'Test::Version'      => 0,
+                            'Type::Tiny'         => 0,
                             'Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText'
                               => 0,
                             'Perl::Critic::Policy::Miscellanea::RequireRcsKeywords'
