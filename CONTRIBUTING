@@ -13,6 +13,10 @@ They must be built against the
 C<L<devel|https://github.com/peczenyj/MooX-Role-Parameterized/tree/devel>> branch,
 then submitted as pull requests at GitHub.
 
+This distribution is authored with L<Dist::Zilla>. C<dist.ini> is the
+single source of truth for the version and the prerequisites; C<Makefile.PL>
+and C<MANIFEST> are generated at build time and are not tracked in git.
+
 The documentation is written using the
 L<POD|http://perldoc.perl.org/perlpod.html> format. Use the C<perldoc> tool
 to render it in a terminal:
@@ -27,22 +31,24 @@ to render it in a terminal:
 
     git clone --origin upstream git://github.com/peczenyj/MooX-Role-Parameterized.git
     cd MooX-Role-Parameterized
-    git checkout main
+    git checkout devel
 
 =item 2. Install build dependencies
 
 Not required for doc patches.
 
-    curl -L https://cpanmin.us | perl - --installdeps --with-develop .
+    curl -L https://cpanmin.us | perl - -nq Dist::Zilla
+    dzil authordeps --missing | cpanm -nq
+    dzil listdeps --develop --missing | cpanm -nq
 
 =item 3. Make your fix/feature
 
-    git checkout -b <my-patch> main
+    git checkout -b <my-patch> devel
 
     # edit files and add modification
 
     # Run the testsuite
-    prove -v
+    dzil test --all
 
     git commit -s -m '<<some nice message>>'
 
@@ -64,6 +70,8 @@ Not required for doc patches.
 
 =item 5.2 Submit a pull request on GitHub
 
+Target the C<devel> branch.
+
 =item 6. Loop
 
 Redo from step 3.
@@ -72,30 +80,32 @@ Redo from step 3.
 
 =head1 FOR RELEASE MANAGER
 
+The C<$VERSION> of every package is injected at build time by the
+C<OurPkgVersion> plugin, so it is bumped in exactly one place: the
+C<version> line in C<dist.ini>. Releases are tag-triggered: pushing a
+C<vX.YYY> tag runs the C<release.yml> workflow, which gates on the tag
+matching C<dist.ini>, runs the tests, builds the distribution, uploads
+it to CPAN and creates a GitHub release.
+
 =over 4
 
-=item * Bump C<$VERSION>
+=item * Bump the version
 
-    git checkout main
-    # Bump version number
-    $EDITOR lib/MooX/Role/Parameterized/Mop.pm
-    $EDITOR lib/MooX/Role/Parameterized/With.pm
-    $EDITOR lib/MooX/Role/Parameterized.pm
-    # Update changelog
+    git checkout devel
+    # Bump the `version` line in dist.ini
+    $EDITOR dist.ini
+    # Update the changelog (the {{$NEXT}} stanza is filled in at build time)
     $EDITOR Changelog
-    # update readme
-    git add .
+    git add dist.ini Changelog
     git commit
 
 =item * Release
 
-    git checkout main
-    perl Makefile.PL
-    make
-    make test
-    make manifest # in case of adding new files / tests / examples...
-    make dist
-    ...
+    git checkout devel
+    dzil test --all
+    git tag v<X.YYY>
+    git push origin devel
+    git push origin v<X.YYY>
 
 =back
 
