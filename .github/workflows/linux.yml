@@ -18,6 +18,10 @@ jobs:
       - run: cpanm -nq Dist::Zilla
       - name: Install author dependencies
         run: dzil authordeps --missing | cpanm -nq
+      - name: Check perltidy formatting
+        run: |
+          cpanm -nq Test::PerlTidy
+          perl -MTest::PerlTidy -e 'Test::PerlTidy::run_tests(perltidyrc => "perltidyrc")'
       - name: Build distribution
         run: dzil build --in build-dir
       - name: Upload build artifact
@@ -25,10 +29,6 @@ jobs:
         with:
           name: build-dir
           path: build-dir
-      - name: Check perltidy formatting
-        run: |
-          cpanm -nq Test::PerlTidy
-          perl -MTest::PerlTidy -e 'Test::PerlTidy::run_tests(perltidyrc => "perltidyrc")'
       - name: Coverage
         env:
           GITHUB_ACTIONS: true
