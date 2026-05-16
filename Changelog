@@ -1,4 +1,4 @@
-next    (unreleased)
+0.601   Sat May 16 2026 11:56:30 CEST
   - drop the "experimental" framing from the documentation
   - add SECURITY.md with a private vulnerability-reporting policy
   - add MooX::Role::Parameterized::Cookbook documentation page

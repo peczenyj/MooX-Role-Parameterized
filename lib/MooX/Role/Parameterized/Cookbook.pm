@@ -1,4 +1,4 @@
-package MooX::Role::Parameterized::Cookbook 0.600;
+package MooX::Role::Parameterized::Cookbook 0.601;
 
 use v5.12;
 use strict;

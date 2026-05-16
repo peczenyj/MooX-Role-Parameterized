@@ -83,11 +83,12 @@ POD-only module: five recipes with worked examples, no functional code (just the
 
 ## Releasing
 
-Releases are automated by `.github/workflows/release.yml`, triggered by pushing a `v*` tag. The workflow checks that the tag matches `$VERSION` in all three modules, runs the test and author-test suites, builds the tarball, uploads it to CPAN, and publishes a GitHub release.
+Releases are automated by `.github/workflows/release.yml`, triggered by pushing a `v*` tag. The workflow checks that the tag matches `$VERSION` in all four modules, runs the test and author-test suites, builds the tarball, uploads it to CPAN, and publishes a GitHub release.
 
-To cut a release: bump `$VERSION` in **all three** module files, add a `Changelog` entry, commit, then `git tag vX.YYY && git push origin vX.YYY`.
+To cut a release: bump `$VERSION` in **all four** module files, add a `Changelog` entry, commit, then `git tag vX.YYY && git push origin vX.YYY`.
 
 - `lib/MooX/Role/Parameterized.pm`
+- `lib/MooX/Role/Parameterized/Cookbook.pm`
 - `lib/MooX/Role/Parameterized/Mop.pm`
 - `lib/MooX/Role/Parameterized/With.pm`
 
