@@ -1,5 +1,5 @@
 # To read this file, run:
-#    perldoc CONTRIBUTING.pod
+#    perldoc ./CONTRIBUTING
 
 =head1 CONTRIBUTING
 
@@ -17,7 +17,7 @@ The documentation is written using the
 L<POD|http://perldoc.perl.org/perlpod.html> format. Use the C<perldoc> tool
 to render it in a terminal:
 
-    perldoc CONTRIBUTING.pod
+    perldoc ./CONTRIBUTING
 
 =head1 PATCHING, STEP BY STEP
 
