@@ -199,10 +199,10 @@ SECURITY.md
 t/01_load.t
 ```
 
-- [ ] **Step 3: Verify the manifest is consistent**
+- [ ] **Step 3: Verify `SECURITY.md` is listed in `MANIFEST`**
 
-Run: `perl Makefile.PL >/dev/null && make manifest 2>&1 | grep -E 'SECURITY|Removed|Added' ; rm -f Makefile MYMETA.* pm_to_blib ; true`
-Expected: no `Added` or `Removed` lines mentioning `SECURITY.md` — it is already listed. (`make manifest` reports nothing to change.)
+Run: `grep -nx 'SECURITY.md' MANIFEST`
+Expected: one matching line — `SECURITY.md` is present in `MANIFEST`.
 
 - [ ] **Step 4: Commit**
 
@@ -574,8 +574,8 @@ L<MooX::Role::Parameterized::Cookbook> - recipes and worked examples
 
 - [ ] **Step 6: Verify the META `provides` map lists the cookbook**
 
-Run: `perl Makefile.PL >/dev/null && grep -A2 'Cookbook' MYMETA.yml ; rm -f Makefile MYMETA.* pm_to_blib ; true`
-Expected: a `provides` block showing `MooX::Role::Parameterized::Cookbook` with `file: lib/MooX/Role/Parameterized/Cookbook.pm` and `version: '0.600'`.
+Run: `perl Makefile.PL >/dev/null && grep -A2 'Cookbook' MYMETA.yml`
+Expected: a `provides` block showing `MooX::Role::Parameterized::Cookbook` with `file: lib/MooX/Role/Parameterized/Cookbook.pm` and `version: '0.600'`. The generated `Makefile`, `MYMETA.*`, and `pm_to_blib` are gitignored build artifacts — leave them in place; they are never committed.
 
 - [ ] **Step 7: Verify author tests and the test suite pass**
 
