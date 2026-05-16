@@ -184,6 +184,18 @@ __END__
 
 MooX::Role::Parameterized - roles with composition parameters
 
+=begin markdown
+
+[![Kwalitee](https://cpants.cpanauthors.org/dist/MooX-Role-Parameterized.svg)](https://cpants.cpanauthors.org/dist/MooX-Role-Parameterized)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/linux.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/linux.yml)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/windows.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/windows.yml)
+[![tests](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/macos.yml/badge.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/actions/workflows/macos.yml)
+[![Coverage Status](https://coveralls.io/repos/github/peczenyj/MooX-Role-Parameterized/badge.svg?branch=master)](https://coveralls.io/github/peczenyj/MooX-Role-Parameterized?branch=master)
+[![license](https://img.shields.io/cpan/l/MooX-Role-Parameterized.svg)](https://github.com/peczenyj/MooX-Role-Parameterized/blob/master/LICENSE)
+[![cpan](https://img.shields.io/cpan/v/MooX-Role-Parameterized.svg)](https://metacpan.org/dist/MooX-Role-Parameterized)
+
+=end markdown
+
 =head1 SYNOPSIS
 
     package Counter;
