@@ -28,7 +28,7 @@ discoverable cookbook page. This spec covers Phase 1 only.
 
 1. Remove the "experimental" framing from the distribution's documentation.
 2. Add a `SECURITY.md` vulnerability-reporting policy.
-3. Reconcile the Git branch layout and prune stale feature branches.
+3. Reconcile the Git branch layout (branch model and stable-branch sync).
 4. Add a `MooX::Role::Parameterized::Cookbook` documentation page.
 5. Back every cookbook recipe with a runnable `examples/` script, verified by a
    new `xt/` author test.
@@ -56,10 +56,11 @@ discoverable cookbook page. This spec covers Phase 1 only.
 | `1.0` release | Not now — stay `0.x` | Maintainer chose to decouple the maturity *wording* from the version *number*; crossing `1.0` is a separate, deliberate decision. |
 | Phase 1 release | None | Maintainer chose Phase 1 to be documentation/hygiene only, with no dedicated release. |
 | Branch model | Keep `master` (stable) + `devel` (integration) | Maintainer chose a two-branch git-flow over consolidating to a single branch. |
+| Feature-branch pruning | None — all existing remote branches are left in place | Maintainer chose not to delete branches; deletion is irreversible and the stale branches are harmless. |
 | Vulnerability reporting channel | Private email to `tiago.peczenyj+cpan@gmail.com` | Maintainer choice; the CPAN contact address, works independently of the hosting platform. |
 | Cookbook structure | A single POD-only `::Cookbook` page, recipes as `=head1` sections | Maintainer chose this over a Moose-style index + per-recipe sub-modules; one file avoids multiplying `MANIFEST` and `provides` entries in a three-module distribution. |
+| Cookbook version declaration | `package MooX::Role::Parameterized::Cookbook 0.600;` | Uses the `package NAME VERSION` syntax the other modules adopted under the 5.12 floor (commit `53208cb`). |
 | Example verification | One runnable `examples/` script per recipe, run by an `xt/` author test | Maintainer chose tested examples so cookbook code cannot silently drift from working code. |
-| `feature/remove-deprecated-methods` | Decision deferred to the maintainer | Unlike the other feature branches it has no merged PR; it is diffed against `devel` and reported, not deleted blindly. |
 
 ## Deliverables
 
@@ -100,25 +101,17 @@ no `.pod` extension, it is not installed as a man page.
 
 ### C. Branch reconciliation
 
-The remote currently carries `master` and `devel` plus six feature branches.
-`origin/HEAD` points at `devel`, which is one commit ahead of `master`.
+The remote currently carries `master` and `devel` plus several feature
+branches. `origin/HEAD` points at `devel`, which is one commit ahead of
+`master`.
 
 - **Branch model:** keep both `master` and `devel`. `master` is the
   stable/released branch; `devel` is the integration branch. `origin/HEAD`
   stays `devel`.
 - **Sync `master`:** fast-forward `master` to the `v0.600` release state so the
   stable branch reflects the current CPAN release.
-- **Prune merged feature branches:** delete, local and remote, the feature
-  branches whose pull requests are confirmed `MERGED`:
-  - `feature/min-perl-5.12` (PR #23)
-  - `feature/perl-5.12-floor` (PR #24)
-  - `add-parameter-keyword` (PR #17)
-  - `apply_roles_to_target-must-support-arrayref-of-parameters` (PR #21)
-  - `fix-bugs-with-parameter` (PR #20)
-- **`feature/remove-deprecated-methods`:** this branch has no associated merged
-  PR. It is diffed against `devel` and its contents reported to the maintainer,
-  who decides whether to keep or delete it. It is not deleted as part of the
-  automatic prune.
+- **Feature branches:** left in place. No branches are deleted in Phase 1 —
+  deletion is irreversible and the stale branches cause no harm.
 - **README badges:** the coverage badge (`branch=master`) and the `LICENSE`
   link (`blob/master/`) already target `master`. Keeping `master` means they
   remain correct — no badge changes are needed.
@@ -146,8 +139,10 @@ Wiring:
 - Linked from `Parameterized.pm`'s `=head1 SEE ALSO`.
 
 The `$VERSION` literal `0.600` matches the current release of the three
-existing modules, consistent with the per-file versioning the distribution uses
-today (single-sourcing `$VERSION` is Phase 3).
+existing modules and is declared with the `package NAME VERSION` syntax those
+modules adopted under the 5.12 floor — `package MooX::Role::Parameterized::Cookbook 0.600;`.
+This is consistent with the per-file versioning the distribution uses today
+(single-sourcing `$VERSION` is Phase 3).
 
 ### E. Tested examples (`xt/`)
 
@@ -216,17 +211,11 @@ existing `MANIFEST.SKIP` rules `^xt/` and `^docs/`.
 - No occurrence of "experimental" remains in `lib/`, `README.md`, or
   `AGENTS.md` (`grep -ri experimental`).
 - `SECURITY.md` is present at the repository root and listed in `MANIFEST`.
-- `master` resolves to the `v0.600` release state; the five merged feature
-  branches are gone from the remote; `feature/remove-deprecated-methods` is
-  reported on for a maintainer decision.
+- `master` resolves to the `v0.600` release state; `devel` remains
+  `origin/HEAD`; no branches were deleted.
 
 ## Risks
 
-- **Branch deletion is irreversible on the remote.** The five branches are
-  deleted only after their PRs are reconfirmed `MERGED`; a merged PR's commits
-  are preserved in `devel`'s history regardless, so deletion loses no work.
-  `feature/remove-deprecated-methods` is explicitly excluded from the automatic
-  prune for this reason.
 - **The cookbook duplicates code that lives in `examples/` and the synopsis.**
   The `xt/author/examples.t` test bounds this risk for the scripts; the
   in-POD code blocks still rely on the maintainer keeping them aligned with the
