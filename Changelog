@@ -1,3 +1,11 @@
+{{$NEXT}}
+  - migrate the build from ExtUtils::MakeMaker to Dist::Zilla
+  - single-source $VERSION in dist.ini, injected into every module
+  - generate README.md from POD; badges sourced from module POD
+  - replace most hand-written xt/ author tests with Dist::Zilla plugins
+  - expand the linux CI matrix to Perl 5.12, 5.20, 5.30, and latest
+  - add tag/version and test gates to the release workflow
+
 0.601   2026-05-16
   - drop the "experimental" framing from the documentation
   - add SECURITY.md with a private vulnerability-reporting policy
