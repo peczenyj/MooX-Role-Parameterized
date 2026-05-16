@@ -1,3 +1,8 @@
+0.600   Fri May 16 2026 08:39:52 CEST
+  - fix issue #22 (CONTRIBUTING.pod gets installed as MooX::Role::CONTRIBUTING)
+  - raise minimum Perl version to 5.12
+  - declare 'use v5.12' in all distributed, test, and example files
+
 0.502   Fri May 15 2026 16:16:22 CEST
   - fix $VERSION typo in MooX::Role::Parameterized::Mop
   - add automated CPAN + GitHub release workflow triggered on v* tags
