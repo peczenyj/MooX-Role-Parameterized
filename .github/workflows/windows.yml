@@ -20,7 +20,6 @@ jobs:
       - run: perl -V
       - run: cpanm -nq Dist::Zilla
       - name: Install author and runtime dependencies
-        shell: bash
         run: |
           dzil authordeps --missing | cpanm -nq
           dzil listdeps --develop --missing | cpanm -nq

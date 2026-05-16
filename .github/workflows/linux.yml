@@ -30,14 +30,17 @@ jobs:
           name: build-dir
           path: build-dir
       - name: Coverage
+        continue-on-error: true
+        working-directory: build-dir
         env:
           GITHUB_ACTIONS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
-          dzil listdeps --develop --missing | cpanm -nq
-          cpanm -nq Devel::Cover::Report::Coveralls Dist::Zilla::App::Command::cover
-          dzil cover -report Coveralls
+          cpanm -nq --installdeps .
+          cpanm -nq Devel::Cover Devel::Cover::Report::Coveralls
+          perl Makefile.PL
+          cover -test -report Coveralls
 
   test:
     name: Perl ${{ matrix.perl }} on ubuntu
