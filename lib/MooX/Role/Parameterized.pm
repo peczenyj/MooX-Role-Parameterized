@@ -1,9 +1,9 @@
 package MooX::Role::Parameterized;
-# VERSION
-
 use v5.12;
 use strict;
 use warnings;
+
+# VERSION
 
 # ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
 
