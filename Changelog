@@ -45,7 +45,7 @@
   - fix bug in requires mop method
   - use existing with subroutine if available on target and use as fallback on MooX::Role::Parameterized::With
   - update examples
-  
+
 0.200   2023-12-30
   - remove deprecated functions hasp and method
 
@@ -59,37 +59,37 @@
   - fallback to Role::Tiny when applying (thanks @perlancar)
   - fix missing prereqs
 
-0.082	2015-12-22
+0.082   2015-12-22
   - fix meta ( bugtracker, issue tracker)
 
-0.081	2015-12-21
+0.081   2015-12-21
   - update dependencies
 
-0.08	2015-12-20
+0.08    2015-12-20
   - update documentation, promote using of mop object
 
-0.07	2015-12-18
+0.07    2015-12-18
   - fix issue with has ( introduct hasp ) see issue #2
   - add mop object to avoid problems with has/around/requires/with/ etc
 
-0.06	2015-11-25
+0.06    2015-11-25
   - allowed apply role multiple times with arrayref ( see issue #1 )
 
-0.05	2015-07-27
+0.05    2015-07-27
   - add tests for 'requires'. yes it works.
 
-0.041	2015-07-27
+0.041   2015-07-27
   - force minperl to 5.10.0
   - maybe 'requires' does not work inside role... should check :/
 
-0.04	2015-07-26
+0.04    2015-07-26
   - add ::With package
 
-0.03	2015-07-26
+0.03    2015-07-26
   - apply role does not need 'with'
 
-0.02	2015-07-26
+0.02    2015-07-26
   - fix pod
 
-0.01	2015-07-26
+0.01    2015-07-26
   - Initial version
