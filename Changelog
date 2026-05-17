@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.700   2026-05-17
   - migrate the build from ExtUtils::MakeMaker to Dist::Zilla
   - single-source $VERSION in dist.ini, injected into every module
   - generate README.md from POD; badges sourced from module POD
