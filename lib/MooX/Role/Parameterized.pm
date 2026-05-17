@@ -5,7 +5,7 @@ use warnings;
 
 # VERSION
 
-# ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
+# ABSTRACT: roles with composition parameters
 
 use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
