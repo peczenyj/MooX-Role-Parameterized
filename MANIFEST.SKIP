@@ -11,12 +11,10 @@ Makefile$
 MANIFEST\.SKIP
 pm_to_blib
 tmp/
-META.yml
 ex/
 t_xs/
 ^MYMETA\.
 ^author/
-^xt/
 ^_
 ^\.
 ^docs/

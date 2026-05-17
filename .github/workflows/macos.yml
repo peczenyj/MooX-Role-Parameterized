@@ -13,7 +13,10 @@ jobs:
         with:
           perl-version: "5.40"
       - run: perl -V
-      - run: cpanm --installdeps .
-      - run: cpanm -n TAP::Formatter::GitHubActions
-      - name: Run Tests
-        run: prove --merge --formatter TAP::Formatter::GitHubActions -l t
+      - run: cpanm -nq Dist::Zilla
+      - name: Install author and runtime dependencies
+        run: |
+          dzil authordeps --missing | cpanm -nq
+          dzil listdeps --develop --missing | cpanm -nq
+      - name: Run tests
+        run: dzil test --all

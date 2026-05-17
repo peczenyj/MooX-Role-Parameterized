@@ -6,57 +6,46 @@ This file provides guidance to agentic coding tools when working with code in th
 
 `MooX::Role::Parameterized` is a CPAN distribution: a port of `MooseX::Role::Parameterized` to `Moo`. It lets a Moo role accept composition-time parameters that customize what gets injected into the consumer (attributes, methods, modifiers).
 
-Minimum Perl is 5.12 (CI matrix runs Perl 5.12 and the latest stable). Patches must be submitted against the `devel` branch.
+Minimum Perl is 5.12 (CI matrix runs Perl 5.12, 5.20, 5.30, and the latest stable). Patches must be submitted against the `devel` branch.
 
 Security vulnerabilities should be reported privately as described in `SECURITY.md`, not through public issues.
 
 ## Common commands
 
-Build / test (ExtUtils::MakeMaker):
+Install Dist::Zilla and all dependencies:
 
 ```
-perl Makefile.PL
-make
-make test
+cpanm -nq Dist::Zilla
+dzil authordeps --missing | cpanm -nq
+dzil listdeps --develop --missing | cpanm -nq
 ```
 
-Run the test suite directly with prove (`.proverc` already adds `-I t/lib -I lib`):
+Build / test (Dist::Zilla):
 
 ```
-prove -v                     # all tests
-prove -v t/02_basic.t        # single file
-prove -lr t                  # how CI invokes it
+dzil test          # t/ tests only
+dzil test --all    # t/ plus author and release tests (xt/)
+dzil build         # build the release tarball
+dzil install       # install from the working copy
 ```
 
-Coverage (CI runs this on the latest-Perl job):
+Run a single test file during development (`.proverc` adds `-I t/lib -I lib`):
 
 ```
-cpanm -n Devel::Cover Devel::Cover::Report::Coveralls
-cover -test -report Coveralls
+prove -lv t/02_basic.t
 ```
 
-Author tests under `xt/`, all run in CI on the latest-Perl job via `prove -lr xt`:
+Coverage (run by the linux CI workflow's build job):
 
 ```
-prove -l xt/perlcritic.t   # Perl::Critic over lib/
-prove -l xt/perltidy.t     # perltidy formatting check
-prove -l xt/examples.t     # run every examples/*.pl script
-prove -l xt/version.t      # $VERSION coherence across modules
-prove -l xt/synopsis.t     # SYNOPSIS code compiles
-prove -lr xt               # all of them at once
+dzil cover -report Coveralls
 ```
 
-`xt/` author tests are not run by `make test`. Install their dependencies with `cpanm --with-develop --installdeps .`.
-
-Install dev dependencies:
-
-```
-curl -L https://cpanmin.us | perl - --installdeps --with-develop .
-```
+Author tests run under `dzil test --all`. Dist::Zilla generates the perlcritic, synopsis, compile, version, POD-syntax, and CPAN-changes tests automatically from `dist.ini` plugins. `xt/author/examples.t` is a hand-written test that runs every `examples/*.pl` script. Perltidy formatting is checked separately by the linux CI workflow — there is no Dist::Zilla plugin for perltidy. Lint configuration lives in `perlcriticrc` and `perltidyrc` at the repo root.
 
 ## Architecture
 
-Three modules implement the system; understanding how they cooperate is the bulk of the codebase:
+Four modules implement the system; understanding how they cooperate is the bulk of the codebase:
 
 ### `lib/MooX/Role/Parameterized.pm` — the DSL and registry
 - Exports `parameter`, `role`, `apply`, `apply_roles_to_target`.
@@ -79,17 +68,16 @@ Three modules implement the system; understanding how they cooperate is the bulk
 `$MooX::Role::Parameterized::VERBOSE` (default false) controls non-fatal warnings (method override, `apply` deprecation carp, redefining `with`). Tests rely on the silent default — flipping it on may add unexpected output.
 
 ### `lib/MooX/Role/Parameterized/Cookbook.pm` — documentation only
-POD-only module: five recipes with worked examples, no functional code (just the `package`/`use`/`1;` boilerplate before `__END__`). Each recipe is backed by a script in `examples/`, and `xt/examples.t` runs them all.
+POD-only module: five recipes with worked examples, no functional code (just the `package`/`use`/`1;` boilerplate before `__END__`). Each recipe is backed by a script in `examples/`, and `xt/author/examples.t` runs them all.
 
 ## Releasing
 
-Releases are automated by `.github/workflows/release.yml`, triggered by pushing a `v*` tag. The workflow checks that the tag matches `$VERSION` in all four modules, runs the test and author-test suites, builds the tarball, uploads it to CPAN, and publishes a GitHub release.
+Releases are automated by `.github/workflows/release.yml`, triggered by pushing a `v*` tag. The workflow checks that the tag matches the `version =` line in `dist.ini`, runs `dzil test --all`, builds with `dzil build`, uploads the tarball to CPAN, and publishes a GitHub release.
 
-To cut a release: bump `$VERSION` in **all four** module files, add a `Changelog` entry, commit, then `git tag vX.YYY && git push origin vX.YYY`.
+To cut a release: bump the single `version =` line in `dist.ini` (the one source of truth — the `[OurPkgVersion]` plugin injects it into every module at build time), add a `Changelog` entry, commit, then `git tag vX.YYY && git push origin vX.YYY`.
 
-- `lib/MooX/Role/Parameterized.pm`
-- `lib/MooX/Role/Parameterized/Cookbook.pm`
-- `lib/MooX/Role/Parameterized/Mop.pm`
-- `lib/MooX/Role/Parameterized/With.pm`
+The `PAUSE_USER` and `PAUSE_PASSWORD` repository secrets must be configured for the CPAN upload step.
 
-The `PAUSE_USERNAME` and `PAUSE_PASSWORD` repository secrets must be configured for the CPAN upload step.
+## CI
+
+`linux.yml` is two-stage: a `build` job runs on the latest Perl and does three things: (1) builds the release tarball with `dzil build --in build-dir` and uploads it as an artifact, (2) runs the perltidy formatting check against the repo source, and (3) runs coverage (`dzil cover -report Coveralls`). A `test` job then runs a matrix over Perl 5.12, 5.20, 5.30, and latest; it downloads the built artifact and tests the unpacked tarball via plain EUMM (`perl Makefile.PL && make && make test`) — not `dzil test`. `macos.yml` and `windows.yml` run `dzil test --all` on Perl 5.40.

@@ -1,8 +1,9 @@
-package MooX::Role::Parameterized::Cookbook 0.601;
-
+package MooX::Role::Parameterized::Cookbook;
 use v5.12;
 use strict;
 use warnings;
+
+# VERSION
 
 # ABSTRACT: recipes and worked examples for MooX::Role::Parameterized
 
