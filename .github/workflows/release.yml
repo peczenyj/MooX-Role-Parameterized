@@ -14,31 +14,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
           perl-version: 'latest'
 
+      - name: Derive version from tag
+        run: echo "V=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
       - name: Install Dist::Zilla and dependencies
         run: |
           cpanm -nq Dist::Zilla CPAN::Uploader
           dzil authordeps --missing | cpanm -nq
           dzil listdeps --develop --missing | cpanm -nq
-
-      - name: Gate - tag matches dist.ini version
-        run: |
-          tag_version="${GITHUB_REF_NAME#v}"
-          ini_version="$(perl -ne 'print $1 and exit if /^version\s*=\s*(\S+)/' dist.ini)"
-          echo "tag=$tag_version dist.ini=$ini_version"
-          if [ -z "$ini_version" ]; then
-            echo "::error::could not extract version from dist.ini"
-            exit 1
-          fi
-          if [ "$tag_version" != "$ini_version" ]; then
-            echo "::error::tag $GITHUB_REF_NAME does not match dist.ini version $ini_version"
-            exit 1
-          fi
 
       - name: Gate - tests
         run: dzil test --all
