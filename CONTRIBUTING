@@ -80,12 +80,16 @@ Redo from step 3.
 
 =head1 FOR RELEASE MANAGER
 
-The C<$VERSION> of every package is injected at build time by the
-C<OurPkgVersion> plugin, so it is bumped in exactly one place: the
-C<version> line in C<dist.ini>. Releases are tag-triggered: pushing a
-C<vX.YYY> tag runs the C<release.yml> workflow, which gates on the tag
-matching C<dist.ini>, runs the tests, builds the distribution, uploads
-it to CPAN and creates a GitHub release.
+There is no version to bump by hand. The version is derived from git
+tags by the C<Git::NextVersion> plugin and injected into every package
+at build time by C<OurPkgVersion>: a build of the tag C<vX.YYY> is
+version C<X.YYY>, and any other build is the latest tag incremented.
+The C<vX.YYY> tag is therefore the single source of truth.
+
+Releases are tag-triggered: pushing a C<vX.YYY> tag runs the
+C<release.yml> workflow, which runs the tests, builds the distribution
+(pinning the version to the tag), uploads it to CPAN and creates a
+GitHub release.
 
 This repository follows the C<git-flow> branching model: C<master>
 holds released code, C<devel> is the integration branch, and each
@@ -101,14 +105,13 @@ release is prepared on a short-lived C<release/X.YYY> branch.
 
 This branches C<release/X.YYY> off C<devel>.
 
-=item 2. Bump the version and update the changelog
+=item 2. Update the changelog
 
-    # Bump the `version` line in dist.ini
-    $EDITOR dist.ini
-    # Update the changelog (the {{$NEXT}} stanza is filled in at build time)
+    # Add the release notes under the {{$NEXT}} line; that placeholder
+    # becomes the "X.YYY <date>" header in the built distribution.
     $EDITOR Changelog
     dzil test --all
-    git add dist.ini Changelog
+    git add Changelog
     git commit
 
 =item 3. Finish the release
@@ -130,7 +133,7 @@ described above.
 The equivalent plain-git steps are:
 
     git checkout -b release/X.YYY devel
-    $EDITOR dist.ini Changelog
+    $EDITOR Changelog
     dzil test --all
     git commit -a
 

@@ -5,7 +5,7 @@ use warnings;
 
 # VERSION
 
-# ABSTRACT: MooX::Role::Parameterized - roles with composition parameters
+# ABSTRACT: roles with composition parameters
 
 use Module::Runtime qw(use_module);
 use Carp            qw(carp croak);
@@ -245,6 +245,19 @@ MooX::Role::Parameterized - roles with composition parameters
     with Counter => {         # injects 'zapped' attribute and
         name => 'zapped',     # methods increment_zapped ( +1 )
     };                        # reset_zapped (set to zero)
+
+=head1 INSTALLATION
+
+To install this module, run the following commands:
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+Alternatively, to install with cpanm:
+
+    cpanm .
 
 =head1 DESCRIPTION
 

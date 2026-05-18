@@ -15,6 +15,7 @@ nytprof.out
 
 # Dist::Zilla
 /.build/
+/MooX-Role-Parameterized-*/
 
 # Module::Build
 _build/

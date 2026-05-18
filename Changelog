@@ -1,4 +1,10 @@
 {{$NEXT}}
+  - fix Kwalitee has_readme issue by adding README to distribution
+  - add INSTALLATION section to documentation
+  - fix module abstracts for better documentation rendering
+  - derive version from git tags using Git::NextVersion
+
+0.700   2026-05-17
   - migrate the build from ExtUtils::MakeMaker to Dist::Zilla
   - single-source $VERSION in dist.ini, injected into every module
   - generate README.md from POD; badges sourced from module POD

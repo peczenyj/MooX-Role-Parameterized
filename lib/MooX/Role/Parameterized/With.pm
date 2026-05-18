@@ -5,7 +5,7 @@ use warnings;
 
 # VERSION
 
-# ABSTRACT: MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
+# ABSTRACT: dsl to apply roles with composition parameters
 
 use Carp                      qw(carp);
 use MooX::Role::Parameterized qw();
@@ -32,7 +32,7 @@ __END__
 
 =head1 NAME
 
-MooX::Role::Parameterized:With - dsl to apply roles with composition parameters
+MooX::Role::Parameterized::With - dsl to apply roles with composition parameters
 
 =head1 SYNOPSIS
 
