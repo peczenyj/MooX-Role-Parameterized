@@ -60,6 +60,19 @@ MooX::Role::Parameterized - roles with composition parameters
         name => 'zapped',     # methods increment_zapped ( +1 )
     };                        # reset_zapped (set to zero)
 
+# INSTALLATION
+
+To install this module, run the following commands:
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+Alternatively, to install with cpanm:
+
+    cpanm .
+
 # DESCRIPTION
 
 It is a port of [MooseX::Role::Parameterized](https://metacpan.org/pod/MooseX%3A%3ARole%3A%3AParameterized) to [Moo](https://metacpan.org/pod/Moo).
