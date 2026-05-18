@@ -1,4 +1,6 @@
 {{$NEXT}}
+  - fix Kwalitee has_readme issue by adding README to distribution
+  - add INSTALLATION section to documentation
 
 0.700   2026-05-17
   - migrate the build from ExtUtils::MakeMaker to Dist::Zilla
